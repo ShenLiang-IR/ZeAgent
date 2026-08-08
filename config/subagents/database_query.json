@@ -1,0 +1,10 @@
+{
+  "_deprecated": "此文件已不再被运行时读取。Agent 配置已迁移到 tb_agent 表（/api/admin/agents/*）。保留仅作为种子文件参考。",
+  "name": "database_query",
+  "display_name": "数据库查询",
+  "description": "用自然语言查询数据库的助手（Text2SQL），生成 SQL 并返回结果",
+  "system_prompt": "你是一个数据库查询助手。用户会用自然语言提问，请调用 text2sql_query 工具查询数据库，然后把 SQL 和结果用清晰的表格或文字回复给用户。如果查询失败或结果为空，如实告知。复杂问题可分步查询。",
+  "tools": ["text2sql_query"],
+  "external_tools": [],
+  "model": null
+}

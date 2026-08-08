@@ -1,0 +1,13 @@
+# RAG 可选依赖（含本地 embedding 模型，会拉取 torch 5GB+）
+# 主镜像（Dockerfile.backend）默认不装，需要 RAG 时手动安装：
+#   pip install -r requirements.rag.txt
+# 或用 pyproject.toml：
+#   pip install -e ".[rag]"
+#
+# torch 用 CPU 版（远小于 CUDA 版）：
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers
+langchain-huggingface
+# CPU 版 torch（避免拉 nvidia-cuda-* 5GB）
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch

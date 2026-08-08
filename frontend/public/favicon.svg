@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- 背景圆 -->
+  <circle cx="32" cy="32" r="30" fill="#1a1a2e" stroke="#0f3460" stroke-width="1.5"/>
+  
+  <!-- 外围轨道环 -->
+  <ellipse cx="32" cy="32" rx="26" ry="26" fill="none" stroke="#16213e" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.6"/>
+  
+  <!-- 外围节点（4个Agent节点） -->
+  <!-- 左上 -->
+  <circle cx="16" cy="16" r="4" fill="#00d2ff" opacity="0.9">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 右上 -->
+  <circle cx="48" cy="16" r="3.5" fill="#7b2ff7" opacity="0.85">
+    <animate attributeName="opacity" values="1;0.5;1" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 左下 -->
+  <circle cx="16" cy="48" r="3.5" fill="#00e676" opacity="0.85">
+    <animate attributeName="opacity" values="0.6;1;0.6" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  <!-- 右下 -->
+  <circle cx="48" cy="48" r="4" fill="#ff6d00" opacity="0.9">
+    <animate attributeName="opacity" values="1;0.5;1" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- 小型子节点 -->
+  <circle cx="24" cy="10" r="2" fill="#00d2ff" opacity="0.5"/>
+  <circle cx="40" cy="10" r="1.8" fill="#7b2ff7" opacity="0.5"/>
+  <circle cx="10" cy="28" r="1.8" fill="#00e676" opacity="0.5"/>
+  <circle cx="54" cy="28" r="2" fill="#ff6d00" opacity="0.5"/>
+  <circle cx="10" cy="40" r="1.5" fill="#00d2ff" opacity="0.4"/>
+  <circle cx="54" cy="40" r="1.5" fill="#7b2ff7" opacity="0.4"/>
+
+  <!-- 连接线（从中心到各节点） -->
+  <line x1="32" y1="32" x2="16" y2="16" stroke="#00d2ff" stroke-width="1.2" opacity="0.5"/>
+  <line x1="32" y1="32" x2="48" y2="16" stroke="#7b2ff7" stroke-width="1.2" opacity="0.5"/>
+  <line x1="32" y1="32" x2="16" y2="48" stroke="#00e676" stroke-width="1.2" opacity="0.5"/>
+  <line x1="32" y1="32" x2="48" y2="48" stroke="#ff6d00" stroke-width="1.2" opacity="0.5"/>
+  
+  <!-- 数据中心 — 六边形中台核心 -->
+  <polygon points="32,24 38,27 38,37 32,40 26,37 26,27" 
+           fill="url(#coreGrad)" 
+           stroke="#00d2ff" 
+           stroke-width="1.2"/>
+  
+  <!-- 渐变定义 -->
+  <defs>
+    <linearGradient id="coreGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f3460"/>
+      <stop offset="50%" stop-color="#16213e"/>
+      <stop offset="100%" stop-color="#0f3460"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 中心字母 A（Agent 首字母） -->
+  <text x="32" y="36" text-anchor="middle" 
+        fill="#00d2ff" font-family="Arial,sans-serif" 
+        font-size="11" font-weight="bold" opacity="0.9">A</text>
+</svg>

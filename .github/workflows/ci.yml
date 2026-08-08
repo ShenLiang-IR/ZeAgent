@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ─── 后端单元测试 ───
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: test
+          MYSQL_DATABASE: agent_test
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -ptest"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install apscheduler>=3.11 watchfiles>=1.1
+      - name: Run migration
+        env:
+          MYSQL_HOST: localhost
+          MYSQL_USER: root
+          MYSQL_PASSWORD: test
+          MYSQL_DATABASE: agent_test
+        run: python scripts/migration/migrate_trigger_schema.py
+      - name: Run backend tests
+        run: python -m pytest test/ -c test/pytest.ini --ignore=test/test_skills.py -q
+
+  # ─── 依赖安全扫描（CVE 检测） ───
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install pip-audit
+        run: pip install pip-audit
+      - name: Scan dependencies for CVE
+        # 扫描 requirements.txt 锁定的依赖
+        # 失败时不阻塞 PR（CVE 告警，人工 review）
+        continue-on-error: true
+        run: pip-audit -r requirements.txt --ignore-vuln "" --desc
+      - name: Scan pyproject.toml
+        continue-on-error: true
+        run: pip-audit --requirement pyproject.toml --desc || true
+
+  # ─── 前端测试 + 构建 ───
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install + test + build
+        run: |
+          cd frontend
+          npm ci --legacy-peer-deps
+          npx vitest run
+          npx vite build
+
+  # ─── Docker 镜像构建验证 ───
+  docker-build:
+    needs: [backend-test, frontend-test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build backend image
+        run: docker build -f docker/Dockerfile.backend -t agent-backend:ci .
+      - name: Build frontend image
+        run: docker build -f docker/Dockerfile.frontend -t agent-frontend:ci .

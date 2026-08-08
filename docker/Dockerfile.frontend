@@ -1,0 +1,24 @@
+# ─── build 阶段：npm install + build ───
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+COPY frontend/package*.json ./
+# --legacy-peer-deps 与本地开发一致（npm 11 peer deps 解析问题）
+RUN npm ci --legacy-peer-deps
+
+COPY frontend/ ./
+RUN npm run build
+
+# ─── runtime 阶段：nginx 静态服务 ───
+FROM nginx:alpine AS runtime
+
+# 从 builder 复制构建产物
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# nginx 配置：SPA fallback + /api 反向代理到后端
+COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+    CMD wget --spider -q http://localhost/ || exit 1

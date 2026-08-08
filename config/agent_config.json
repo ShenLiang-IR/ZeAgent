@@ -1,0 +1,528 @@
+{
+    "llm": {
+        "default": {
+            "base_url": "http://127.0.0.1:11434/v1",
+            "model": "gemma4:31b-cloud",
+            "api_key": "ollama",
+            "temperature": 0.1,
+            "max_tokens": 2001,
+            "enable_thinking": true,
+            "parallel_tool_calls": true,
+            "provider": "ollama",
+            "request_headers": {
+                "enabled": false
+            }
+        }
+    },
+    "agent": {
+        "recursion_limit": 50,
+        "_comment_recursion_limit": "Agent 递归调用限制，防止无限循环。工具调用场景建议 >= 50",
+        "debug": false,
+        "_comment_debug": "是否启用调试模式，影响日志输出和错误处理",
+        "enable_execution_panel": false,
+        "_comment_enable_execution_panel": "是否启用执行面板，用于展示工作流执行详情",
+        "react": {
+            "disable_thinking": false,
+            "_comment_disable_thinking": "ReAct 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）",
+            "efficient_execution": true
+        },
+        "deep_agent": {
+            "disable_thinking": false,
+            "_comment_disable_thinking": "DeepAgent 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）"
+        },
+        "planner": {
+            "disable_thinking": true,
+            "temperature": 0,
+            "_comment_temperature": "P1: planner LLM temperature（0=确定性，减少同问句不同结果）",
+            "cache_ttl_seconds": 1800,
+            "_comment_cache_ttl_seconds": "plan 缓存 TTL（秒），默认 30 分钟",
+            "cache_max_entries": 32,
+            "_comment_cache_max_entries": "plan 缓存 LRU 上限",
+            "max_dynamic_steps": 5,
+            "_comment_max_dynamic_steps": "迭代规划（DYNAMIC 模式）最大步数上限，防无限循环",
+            "_comment_disable_thinking": "Planner 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）"
+        },
+        "backend": "langgraph",
+        "_comment_backend": "Agent 后端引擎: 'langgraph' (默认, ReAct) 或 'deepagents' (深度思考)",
+        "auto_plan": true,
+        "_comment_auto_plan": "是否启用 LLM 自主规划（true 时走 PlanExecutor：LLM 据用户请求+可用 agent 能力卡，自动决定调用哪些 agent + mode + 依赖，生成 ExecutionPlan 并编排执行）。与 backend 正交：auto_plan=true 时忽略 backend 直接走规划；false 时按 backend 选 executor。默认 false（向下兼容）",
+        "skills_dir": "./skills",
+        "_comment_skills_dir": "磁盘原生 Skills 目录（SKILL.md），相对于 app 目录，为空则不加载磁盘技能",
+        "use_skill_backend": true,
+        "_comment_use_skill_backend": "是否通过 DatabaseSkillBackend 加载数据库技能（true=DeepAgents Skills 路径，false=传统 Tool 路径）",
+        "tot": {
+            "max_depth": 3,
+            "_comment_max_depth": "ToT 推理树最大深度（默认 3）",
+            "beam_width": 3,
+            "_comment_beam_width": "ToT 每层保留的分支数（束搜索宽度，默认 3）",
+            "branching_factor": 3,
+            "_comment_branching_factor": "ToT 每个节点生成的候选思路数（默认 3）",
+            "enable_tools": false,
+            "_comment_enable_tools": "ToT brainstorm 阶段是否注入工具（每个分支可调工具搜集信息，默认 false）",
+            "refine_enabled": true,
+            "_comment_refine_enabled": "ToT 是否启用 Self-Refine（最优分支得分<阈值时 critique→improve 迭代，默认 true）",
+            "refine_threshold": 7.0,
+            "_comment_refine_threshold": "触发 Self-Refine 的最低分数（得分低于此分进入 refine 循环，默认 7）",
+            "refine_max_iterations": 2,
+            "_comment_refine_max_iterations": "Self-Refine 最大迭代次数（默认 2，防无限循环）",
+            "merge_enabled": true,
+            "_comment_merge_enabled": "是否启用 Graph-of-Thought 分支合并（两个互补高分思路融合为新的更优思路，默认 true）",
+            "merge_similarity_threshold": 0.8,
+            "_comment_merge_similarity_threshold": "触发分支合并的相似度（分数差≤2且均≥6 分时触发，默认 0.8）"
+        },
+        "_comment_tot": "Tree-of-Thought 执行器配置（backend='tree_of_thought' 时生效）。v2 新增完整 Graph-of-Thought 支持：分支内工具调用/流式进度展示/Self-Refine 循环/分支合并。",
+        "execution": {
+            "type": "langgraph",
+            "_comment_type": "任务执行器类型: 'langgraph' (推荐) 或 'legacy' (原有实现)",
+            "use_workflow": true,
+            "_comment_use_workflow": "是否使用新的工作流执行器（真正的并行执行、智能DAG调度）",
+            "parallel_tools": {
+                "enabled": true,
+                "_comment_enabled": "是否启用并行工具执行（LangGraph ToolNode 自动并行）"
+            },
+            "parallel_tasks": {
+                "max_concurrency": 5,
+                "_comment_max_concurrency": "工作流模式下最大并行任务数",
+                "rate_limits": {},
+                "_comment_rate_limits": "per-agent 限流 {agent_name: rate_limit}，空=全用全局 semaphore（兼容）",
+                "acquire_timeout": 60,
+                "_comment_acquire_timeout": "信号量等待超时（秒），防长任务持有致饥饿，默认 60"
+            },
+            "graph_cache": {
+                "max_entries": 64,
+                "_comment_max_entries": "编译图缓存上限（LRU），防多 agent 多 workspace 场景内存膨胀"
+            },
+            "timeout": {
+                "task_timeout": 300,
+                "_comment_task_timeout": "单个任务超时时间（秒）"
+            },
+            "retry": {
+                "enabled": true,
+                "max_attempts": 3,
+                "_comment_max_attempts": "最大重试次数"
+            },
+            "delegation": {
+                "enabled": false,
+                "max_depth": 2
+            },
+            "debate": {
+                "max_rounds": 2,
+                "_comment_max_rounds": "辩论最大轮数（正反方各一轮 + 裁判裁定）"
+            },
+            "upstream_result_tool": {
+                "enabled": false
+            },
+            "crash_resume": {
+                "persist_intermediate": false
+            },
+            "trigger_leader_election": {
+                "enabled": false,
+                "ttl_seconds": 30
+            },
+            "replan": {
+                "max_rounds": 3,
+                "_comment_max_rounds": "动态重规划最大轮次（0=禁用重规划，默认 3）",
+                "max_loop": 3,
+                "_comment_max_loop": "task 级循环最大次数（0=禁用循环，默认 3）。loop.until 未满足时重跑同 plan",
+                "human_approval": false,
+                "_comment_human_approval": "人工审核开关（true 时 task 完成后暂停等审核）",
+                "human_approval_timeout": 300,
+                "_comment_human_approval_timeout": "审核超时秒数（超时按 reject 处理）"
+            }
+        }
+    },
+    "sandbox": {
+        "enabled": true,
+        "_comment_enabled": "是否启用沙箱（文件读写隔离）",
+        "base_dir": "./data/sandbox",
+        "allow_bash": true,
+        "_comment_allow_bash": "是否允许在沙箱中执行 bash 命令"
+    },
+    "security": {
+        "content_filter": {
+            "enabled": true,
+            "_comment_enabled": "是否启用内容安全审查（敏感词过滤）"
+        }
+    },
+    "workflow": {
+        "default_task_timeout": 30
+    },
+    "logging": {
+        "console": {
+            "level": "DEBUG",
+            "enabled": true,
+            "format": "%(asctime)s | %(name)-30s | %(levelname)-8s | %(message)s",
+            "date_format": "%H:%M:%S"
+        },
+        "file": {
+            "level": "DEBUG",
+            "enabled": true,
+            "filename": "agent_execution.log",
+            "max_bytes": 10485760,
+            "backup_count": 5,
+            "format": "%(asctime)s | %(name)-40s | %(levelname)-8s | %(message)s",
+            "date_format": "%Y-%m-%d %H:%M:%S"
+        },
+        "namespaces": {
+            "agent": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "graph": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "infrastructure": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "utils": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "tools": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "api": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "database": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "core": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "domain": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "shared": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "services": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "subagents": {
+                "level": "DEBUG",
+                "enabled": true
+            },
+            "skills": {
+                "level": "INFO",
+                "enabled": true
+            }
+        },
+        "performance": {
+            "enabled": true,
+            "log_tool_calls": true,
+            "log_llm_calls": true,
+            "log_tool_io_details": false,
+            "log_llm_io_details": false,
+            "log_agent_creation": true,
+            "log_json_output": true
+        }
+    },
+    "memory": {
+        "enabled": true,
+        "immediate_size": 100,
+        "short_term_size": 1000,
+        "short_term_ttl_hours": 24,
+        "long_term_size": 10000,
+        "auto_store_conversation": true,
+        "_comment_auto_store_conversation": "是否自动存储对话记忆（不依赖压缩触发）",
+        "extract_key_info": true,
+        "_comment_extract_key_info": "是否自动提取关键信息到长期记忆",
+        "min_content_length": 10,
+        "_comment_min_content_length": "最小存储内容长度（字符）",
+        "vector_backend": "chromadb",
+        "vector_config": {
+            "collection_name": "agent_memories",
+            "persist_directory": "data/chroma_memory"
+        },
+        "_comment_vector_backend": "LongTerm 向量检索后端：chromadb=本地向量库(需 chromadb+sentence-transformers)；缺省=仅 SQLite 关键词检索",
+        "conflict_resolution": {
+            "enabled": true,
+            "similarity_threshold": 0.6,
+            "max_candidates": 5,
+            "_comment": "写入 long_term 前做 LLM 冲突检测；仅命中相似候选才调 LLM；LLM 不可用降级 ADD"
+        },
+        "recency_weight": 0.15,
+        "_comment_recency_weight": "recall 排序 recency 权重(0-1)：0=纯相关性，1=纯时间衰减",
+        "consolidation": {
+            "enabled": true,
+            "cron": "0 5 * * *",
+            "similarity_threshold": 0.85,
+            "max_pairs_per_user": 10,
+            "_comment": "每日 05:00 按 user 维度合并高相似长期记忆（embedding 相似度≥阈值）；已启用（有审计/回滚兜底）"
+        },
+        "cross_session_recall": true,
+        "_comment_cross_session_recall": "跨 session 召回开关：true=recall 按 user_id 跨会话召回长期记忆；false=仅 session_id(原行为)",
+        "cross_session_history": false,
+        "_comment_cross_session_history": "跨 session 对话历史加载开关：true=_load_conversation_history 按 user_id 跨会话加载最近对话原文补充上下文(连续工作流场景)；false=只加载当前 session(新会话隔离，默认)",
+        "cross_session_history_limit": 10,
+        "_comment_cross_session_history_limit": "跨 session 加载的最大消息条数(避免全量塞太多原文)",
+        "pref_inject_threshold": 0.5,
+        "_comment_pref_inject_threshold": "preference 注入相关性阈值(0-1)：recall 的 preference 相似度/hybrid_score >= 此值才注入 SystemMessage，避免无关问题被偏好带偏；过低会注入无关偏好，过高会漏注入相关偏好",
+        "decay": {
+            "enabled": true,
+            "cron": "0 3 * * *",
+            "factor": 0.95,
+            "cleanup_below": 0.1,
+            "_comment": "定时衰减：每日 03:00 衰减 importance×factor + 清理 importance<cleanup_below 的长期记忆"
+        },
+        "preference_summary": {
+            "enabled": true,
+            "cron": "0 4 * * *",
+            "lookback_limit": 50,
+            "min_conversations": 6,
+            "_comment": "定时偏好总结：每日 04:00 扫描用户历史会话，LLM 总结偏好画像存长期记忆（自动捕获隐式偏好，单轮提取漏掉的）"
+        }
+    },
+    "compression": {
+        "enabled": true,
+        "provider": "acon",
+        "trigger_tokens": 40000,
+        "target_tokens": 20000,
+        "keep_recent_turns": 3,
+        "keep_tool_results": 2
+    },
+    "isolation": {
+        "level": "none",
+        "inherit_system_prompt": true,
+        "inherit_tools": true,
+        "inherit_recent_messages": 2,
+        "isolate_tool_results": true,
+        "max_inherited_tokens": 10000
+    },
+    "stream": {
+        "content_chunk_size": 32,
+        "heartbeat_interval_seconds": 15
+    },
+    "events": {
+        "queue_max_size": 1000
+    },
+    "auth": {
+        "jwt_secret": "${JWT_SECRET:dev-secret-change-in-production}",
+        "jwt_algorithm": "HS256",
+        "enable_permission_check": true,
+        "_comment_enable_permission_check": "是否开启权限校验。true: 使用现有权限解析逻辑（支持自定义解析器）；false: 使用标准JWT解析，roles强制返回[\"admin\"]",
+        "default_token": "${JWT_DEFAULT_TOKEN:}",
+        "_comment_default_token": "当enable_permission_check为false时，API调用使用的默认token"
+    },
+    "embedding": {
+        "provider": "local",
+        "model": "./bge-small-zh-v1___5",
+        "_comment_provider": "local=本地模型目录路径(需 sentence-transformers) / openai / ollama / huggingface",
+        "_comment_model": "provider=local 时为本地模型目录路径；openai/ollama 时为模型名；huggingface 时为 HF hub 名"
+    },
+    "rag": {
+        "persist_directory": "data/chroma_rag",
+        "chunk": {
+            "size": 500,
+            "overlap": 100,
+            "by_doc_type": {
+                "pdf": [
+                    1000,
+                    200
+                ],
+                "txt": [
+                    500,
+                    100
+                ],
+                "md": [
+                    512,
+                    51
+                ]
+            },
+            "structure": {
+                "enabled": true,
+                "types": [
+                    "md",
+                    "html"
+                ],
+                "_comment": "结构感知分块。按文档类型选 Markdown/HTML header splitter"
+            },
+            "parent_child": {
+                "enabled": false,
+                "parent_size": 1000,
+                "parent_overlap": 200,
+                "child_size": 200,
+                "child_overlap": 20,
+                "_comment": "父子文档分块。检索子块返回父块"
+            },
+            "_comment": "分块参数。by_doc_type/structure/parent_child 三种策略"
+        },
+        "hybrid": {
+            "enabled": true,
+            "ratio": 0.7,
+            "_comment": "混合检索。ratio=语义占比(0-1)"
+        },
+        "rerank": {
+            "enabled": false,
+            "model": "BAAI/bge-reranker-base",
+            "_comment": "Cross-encoder rerank。关闭：bge-reranker-base 下载加载失败致首次 retrieve 14s，关闭后首次即快"
+        },
+        "query_rewrite": {
+            "enabled": false,
+            "_comment": "LLM 查询改写（模糊查询→精确检索查询，降级安全）"
+        },
+        "agentic": {
+            "enabled": false,
+            "max_attempts": 3,
+            "_comment": "Agentic RAG loop（检索→评估→生成/改写重检索）。需 LLM 可用"
+        },
+        "vector_store": {
+            "backend": "chromadb",
+            "url": "http://localhost:6333",
+            "_comment": "向量库后端。chromadb=嵌入式（默认）/ qdrant=需 Docker"
+        }
+    },
+    "mineru": {
+        "base_url": "https://mineru.net/api/v4/extract/task",
+        "_comment_base_url": "MinerU API 服务地址，可改为自建或测试环境地址",
+        "api_key": "${MINERU_API_KEY:}",
+        "_comment_api_key": "MinerU API 密钥，优先从环境变量 MINERU_API_KEY 读取",
+        "timeout": 600,
+        "_comment_timeout": "API 请求超时时间（秒）",
+        "poll_interval": 5,
+        "_comment_poll_interval": "解析状态轮询间隔（秒）"
+    },
+    "internal_parse": {
+        "_comment": "内网异步文件解析服务配置",
+        "api_key": "${INTERNAL_PARSE_API_KEY:}",
+        "base_url": "http://20.200.175.85:32023",
+        "expire_seconds": 1800,
+        "timeout": 1500,
+        "poll_interval": 5,
+        "global_busi_track_no": "TRACK20240001",
+        "send_sys_or_cmpt_no": "99714490000",
+        "start_sys_or_cmpt_no": "99714490000",
+        "busi_send_inst_no": "INST001",
+        "scene_id": "0060",
+        "parse_service": "GDPS",
+        "parse_type": "MARKDOWN_FORMAT",
+        "enable_process_table_metadata": "True",
+        "enable_process_header_metadata": "True",
+        "enable_seg_chunk": "True",
+        "enable_title_correction": "True"
+    },
+    "storage": {
+        "provider": "minio",
+        "endpoint": "127.0.0.1:9000",
+        "access_key": "minio",
+        "secret_key": "${MINIO_SECRET_KEY:}",
+        "secure": false,
+        "region": "us-east-1",
+        "default_bucket": "agent",
+        "temp_dir": "./temp/downloads"
+    },
+    "context": {
+        "max_history": 50,
+        "_comment_max_history": "最大历史消息数量（超过时截断）",
+        "compression_enabled": true,
+        "_comment_compression_enabled": "是否启用上下文压缩",
+        "recent_window_size": 10,
+        "_comment_recent_window_size": "压缩时保留的最近消息窗口大小",
+        "compression_threshold": 0.8,
+        "_comment_compression_threshold": "压缩阈值，上下文使用率超过此值时触发压缩",
+        "edit_keep": 3,
+        "_comment_edit_keep": "保留的最近工具结果数量",
+        "edit_trigger": 30000,
+        "_comment_edit_trigger": "ContextEditingMiddleware 触发阈值（字符数），超过时压缩旧工具结果。默认 50000，降至 30000 减少长链式 DAG 的 token 成本",
+        "dep_result_max_chars": 6000,
+        "_comment_dep_result_max_chars": "task 间依赖结果(dep_result)注入 prompt 的字符上限，超限截断保留首70%+尾30%+中间标记。0=不截断（兼容旧行为）。默认 6000 约合 1500 token"
+    },
+    "observability": {
+        "langfuse": {
+            "enabled": false,
+            "_comment_enabled": "是否启用 langfuse tracing（关闭时零影响主流程）",
+            "public_key": "${LANGFUSE_PUBLIC_KEY:}",
+            "_comment_public_key": "langfuse public key（enabled=true 时必填）",
+            "secret_key": "${LANGFUSE_SECRET_KEY:}",
+            "_comment_secret_key": "langfuse secret key（enabled=true 时必填）",
+            "host": "${LANGFUSE_HOST:http://127.0.0.1:3300}",
+            "_comment_host": "langfuse 后端地址（自托管默认 3000 端口，云端用 https://cloud.langfuse.com）",
+            "self_hosted": true,
+            "_comment_self_hosted": "true=自托管 docker-compose，false=云端"
+        },
+        "checkpoint": {
+            "mysql_enabled": false,
+            "_comment_mysql_enabled": "是否启用 MySQL checkpointer 持久化（false=MemorySaver 内存，true=AIOMySQLSaver 跨重启，读 db_config.json 的 checkpoint 段）"
+        }
+    },
+    "eval": {
+        "_comment": "端到端评测配置（当前文档分析.md §3.7）。judge_model_id 为空时用项目默认 LLM 做 LLM-as-Judge；auto_judge=true 时 dispatch 完成自动触发评测",
+        "judge_model_id": "",
+        "auto_judge": true
+    },
+    "quota": {
+        "_comment": "配额降级配置（当前文档分析.md §3.9）。degrade 模式超限时切备用模型；fallback_model_id 为 tb_model_config 的 id，空则仅记日志不切模型",
+        "fallback_model_id": "7ee30c6f05aa4f22bb7dfc7e5a40bd8e"
+    },
+    "checkpoint": {
+        "mysql": {
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}",
+            "database": "${MYSQL_CHECKPOINT_DB:checkpoint}"
+        },
+        "backend": "memory"
+    },
+    "database": {
+        "_comment": "数据库连接配置（从 db_config.json 合并）。值用 ${ENV:default} 环境变量占位符",
+        "config": {
+            "type": "mysql",
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "database": "${MYSQL_DATABASE:agent_config}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}",
+            "mincached": 2,
+            "maxcached": 10
+        },
+        "chat": {
+            "type": "mysql",
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "database": "${MYSQL_DATABASE:agent_config}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}",
+            "mincached": 2,
+            "maxcached": 20
+        },
+        "checkpoint": {
+            "type": "mysql",
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "database": "${MYSQL_CHECKPOINT_DB:checkpoint}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}"
+        },
+        "writing": {
+            "type": "mysql",
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "database": "${MYSQL_DATABASE:agent_config}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}",
+            "mincached": 1,
+            "maxcached": 10
+        },
+        "business": {
+            "type": "mysql",
+            "host": "${MYSQL_HOST:127.0.0.1}",
+            "port": "${MYSQL_PORT:3306}",
+            "database": "${MYSQL_DATABASE:agent_config}",
+            "user": "${MYSQL_USER:root}",
+            "password": "${MYSQL_PASSWORD:root1234}",
+            "mincached": 1,
+            "maxcached": 10
+        }
+    }
+}

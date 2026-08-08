@@ -1,0 +1,9 @@
+{
+  "name": "default",
+  "display_name": "默认助手",
+  "description": "通用智能助手，能回答问题、进行分析和创作",
+  "system_prompt": "你是一个友好、专业的智能助手。请根据用户的问题给出清晰、准确的回答。",
+  "tools": [],
+  "external_tools": [],
+  "model": null
+}

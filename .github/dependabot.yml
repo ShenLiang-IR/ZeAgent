@@ -1,0 +1,70 @@
+# Dependabot 配置：自动检测依赖更新并提 PR
+# 文档：https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # ─── Python 依赖（pip） ───
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"      # 每周检查更新
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5  # 同时最多 5 个 PR
+    # 仅检查安全更新（CVE），不主动升级 minor/version
+    # 升级 major version 需要人工 review
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps(python)"
+      include: "scope"
+    # 排除 RAG 可选依赖（torch 等，体积大且不影响主流程）
+    # 注意：dependabot 不支持 ignore by name pattern，只能列具体包名
+    ignore:
+      - dependency-name: "torch"
+      - dependency-name: "sentence-transformers"
+      - dependency-name: "langchain-huggingface"
+      - dependency-name: "nvidia-*"
+        # 上面是 CUDA 依赖，不主动升级（torch 升级时一起）
+
+  # ─── 前端 npm 依赖 ───
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "deps(npm)"
+      include: "scope"
+
+  # ─── Docker 基础镜像 ───
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "deps(docker)"
+      include: "scope"
+
+  # ─── GitHub Actions 版本 ───
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "deps(ci)"
+      include: "scope"

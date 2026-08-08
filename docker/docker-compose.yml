@@ -1,0 +1,130 @@
+# ⚠️ 启动方式（必须在项目根目录执行，--project-directory 指回根目录，
+#    保证文件内所有相对路径如 ./config、.env 仍按项目根解析）：
+#   基础服务（不含监控）：
+#     docker compose --project-directory . -f docker/docker-compose.yml up -d
+#   含 Prometheus + Grafana 监控（需要 GRAFANA_ADMIN_PASSWORD 环境变量）：
+#     docker compose --project-directory . -f docker/docker-compose.yml --profile monitoring up -d
+services:
+  # ─── 后端 API ───
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: agent-backend
+    ports:
+      - "8072:8072"
+    env_file: .env
+    environment:
+      # 覆盖 config/agent_config.json 里的 ${VAR:default}
+      AGENT_CONFIG_DIR: /app/config
+      # 日志目录（容器内绝对路径，挂载到宿主机 ./logs）
+      LOG_DIR: /logs
+      # 限流共享 Redis（4 worker 部署时共享计数，避免实际限流=配置×4）
+      REDIS_URL: redis://redis:6379/1
+      # 多 worker leader 选举（防止 cron 触发器重复执行）
+      AGENT_TRIGGER_LEADER_ELECTION_ENABLED: "true"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+      - ./logs:/logs          # logging_utils 推算到 /logs（容器内绝对路径）
+      - ./logs:/app/logs      # 兼容代码内其他相对路径写法
+    restart: unless-stopped
+    networks: [agent-net]
+
+  # ─── 前端 ───
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: agent-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks: [agent-net]
+
+  # ─── MySQL（业务数据 + APScheduler jobstore + audit log） ───
+  mysql:
+    image: mysql:8.0
+    container_name: agent-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-agent}
+      MYSQL_USER: ${MYSQL_USER:-agent}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?MYSQL_PASSWORD is required}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks: [agent-net]
+
+  # ─── Redis（限流共享存储，4 worker 部署共享计数）──
+  # 本地开发无需 Redis（无 REDIS_URL 时 slowapi 自动 fallback in-memory）
+  # 生产多 worker 部署时 backend 通过 REDIS_URL 连此 Redis
+  redis:
+    image: redis:7-alpine
+    container_name: agent-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks: [agent-net]
+
+  # ─── Prometheus 监控指标采集（可选 — 使用 --profile monitoring 启用）───
+  # 每 15 秒抓取 backend:8072/metrics，存储时序数据
+  # Grafana 用此数据源做 dashboard
+  prometheus:
+    profiles: [monitoring]
+    image: prom/prometheus:latest
+    container_name: agent-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=30d"
+    restart: unless-stopped
+    networks: [agent-net]
+
+  # ─── Grafana 监控可视化（可选 — 使用 --profile monitoring 启用）───
+  # 密码由 GRAFANA_ADMIN_PASSWORD 环境变量提供（必须设置）
+  # 数据源自动配置 Prometheus（provisioning）
+  grafana:
+    profiles: [monitoring]
+    image: grafana/grafana:latest
+    container_name: agent-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks: [agent-net]
+
+volumes:
+  mysql_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  agent-net:
+    driver: bridge

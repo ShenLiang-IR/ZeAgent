@@ -1,0 +1,3823 @@
+{
+  "external_tools": [
+    {
+      "name": "analytics_bond_credit_enhancement_ratio",
+      "display_name": "增信方式占比",
+      "description": "统计增信方式占比，分析市场中各种增信方式的使用情况。",
+      "parameter_descriptions": {},
+      "return_description": "返回各增信方式的数量和占比。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/credit-enhancement-ratio",
+      "method": "POST",
+      "headers": {},
+      "parameters": {},
+      "enabled": true,
+      "parameter_list": []
+    },
+    {
+      "name": "analytics_bond_distribution",
+      "display_name": "债券分布分析",
+      "description": "债券分布分析，按期限、评级或行业等维度分析债券的分布情况。适用于需要了解债券市场结构、分析债券分布特征等场景。",
+      "parameter_descriptions": {
+        "dimension": "分布维度（必填），可选值：'maturity'（按期限分布）、'rating'（按评级分布）、'industry'（按行业分布）"
+      },
+      "return_description": "返回JSON格式的分布分析结果，包含各分类的债券数量、占比等字段",
+      "examples": [
+        "analytics_bond_distribution('maturity') -> 返回债券的期限分布"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/distribution",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "dimension": "<dimension>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "dimension",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "分布维度（必填），可选值：'maturity'（按期限分布）、'rating'（按评级分布）、'industry'（按行业分布）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "analytics_bond_industry_stats",
+      "display_name": "行业债券指标统计",
+      "description": "按行业统计债券指标，如票面利率、发行规模等。适用于需要分析不同行业债券特征、评估行业分布等场景。",
+      "parameter_descriptions": {
+        "industry": "行业筛选（可选），如：'房地产'、'新能源'等。如果不提供则统计所有行业",
+        "indicator": "要统计的指标（可选，默认'coupon_rate'），可选值：'coupon_rate'（票面利率）、'issue_amount'（发行规模）等"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各行业的指标统计（均值、最大值、最小值、中位数、标准差等）和债券数量",
+      "examples": [
+        "analytics_bond_industry_stats(industry='房地产', indicator='coupon_rate') -> 返回房地产行业债券的票面利率统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/industry-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "industry": "<industry>",
+        "indicator": "<indicator>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业筛选（可选），如：'房地产'、'新能源'等。如果不提供则统计所有行业",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要统计的指标（可选，默认'coupon_rate'），可选值：'coupon_rate'（票面利率）、'issue_amount'（发行规模）等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_bond_maturity_yield",
+      "display_name": "期限加权收益率统计",
+      "description": "按剩余期限统计平均票面利率，分析不同期限债券的利率水平。适用于需要分析期限结构、评估不同期限债券利率水平等场景。",
+      "parameter_descriptions": {
+        "maturity_range": "期限范围（可选），可选值：'1年以内'、'1-3年'、'3-5年'、'5年以上'。如果不提供则统计所有期限"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各期限范围的平均票面利率、最大值、最小值、中位数、标准差等统计指标",
+      "examples": [
+        "analytics_bond_maturity_yield(maturity_range='1-3年') -> 返回1-3年期限债券的票面利率统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/maturity-yield",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "maturity_range": "<maturity_range>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "maturity_range",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "期限范围（可选），可选值：'1年以内'、'1-3年'、'3-5年'、'5年以上'。如果不提供则统计所有期限",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "analytics_bond_rating_trend",
+      "display_name": "债券评级趋势",
+      "description": "债券评级趋势分析，分析指定债券或发债主体的信用评级随时间的变化趋势。适用于需要跟踪评级变化、分析评级趋势、识别评级下调风险等场景。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码（可选），如：'123456.SH'。如果提供则分析该债券的评级趋势",
+        "issuer_name": "发债主体名称（可选），如：'XX集团'。如果提供则分析该发债主体的评级趋势。bond_code和issuer_name至少提供一个",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的评级趋势分析数据，包含：债券代码/发债主体名称、评级历史时间序列（日期、评级、评级机构、评级展望、调整原因等）等字段",
+      "examples": [
+        "analytics_bond_rating_trend(bond_code='123456.SH', '2024-01-01', '2024-12-31') -> 返回该债券在2024年的评级趋势",
+        "analytics_bond_rating_trend(issuer_name='XX集团', '2024-01-01', '2024-12-31') -> 返回XX集团在2024年的评级趋势"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/rating-trend",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "issuer_name": "<issuer_name>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码（可选），如：'123456.SH'。如果提供则分析该债券的评级趋势",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称（可选），如：'XX集团'。如果提供则分析该发债主体的评级趋势。bond_code和issuer_name至少提供一个",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_bond_region_rating_stats",
+      "display_name": "区域+评级债券统计",
+      "description": "按区域+评级组合统计债券发行规模，分析不同区域和评级组合下的债券发行情况。适用于需要分析债券市场结构、评估区域和评级分布等场景。",
+      "parameter_descriptions": {
+        "region": "区域筛选（可选），如：'长三角'、'珠三角'等。如果不提供则统计所有区域",
+        "rating": "评级筛选（可选），如：'AAA'、'AA+'等。如果不提供则统计所有评级"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各区域+评级组合的债券数量、总发行规模等字段",
+      "examples": [
+        "analytics_bond_region_rating_stats(region='长三角', rating='AAA') -> 返回长三角地区AAA级债券的统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/bond/region-rating-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "region": "<region>",
+        "rating": "<rating>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域筛选（可选），如：'长三角'、'珠三角'等。如果不提供则统计所有区域",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "评级筛选（可选），如：'AAA'、'AA+'等。如果不提供则统计所有评级",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_comparison",
+      "display_name": "发债主体对比分析",
+      "description": "发债主体对比分析，对比多个发债主体的财务指标。适用于需要比较不同发债主体的财务状况、进行主体对比等场景。",
+      "parameter_descriptions": {
+        "issuer_names": "发债主体名称列表（必填），数组格式，如：['XX集团', 'YY公司']",
+        "indicators": "要对比的指标列表（可选），数组格式，如：['asset_liability_ratio', 'ebitda_interest_coverage']。如果不提供则使用默认指标"
+      },
+      "return_description": "返回JSON格式的对比分析数据，包含各发债主体的基本信息（名称、行业、区域、评级）和各项指标的对比数据",
+      "examples": [
+        "analytics_issuer_comparison(['XX集团', 'YY公司'], ['asset_liability_ratio', 'ebitda_interest_coverage']) -> 返回两个发债主体的指标对比"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/comparison",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_names": "<issuer_names>",
+        "indicators": "<indicators>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_names",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体名称列表（必填），数组格式，如：['XX集团', 'YY公司']",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicators",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要对比的指标列表（可选），数组格式，如：['asset_liability_ratio', 'ebitda_interest_coverage']。如果不提供则使用默认指标",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_default_risk",
+      "display_name": "发债主体违约风险",
+      "description": "发债主体违约风险分析，基于财务指标、历史履约、行业风险、区域风险等多维度评估发债主体的违约概率和风险等级。适用于需要评估违约风险、识别高风险主体、进行风险预警等场景。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称（必填），如：'XX集团'、'XX公司'等",
+        "include_history": "是否包含历史违约风险评估（可选，默认false）。设置为true时返回历史风险评估时间序列",
+        "risk_factors": "风险因子权重（可选），JSON对象格式，用于自定义风险因子权重。如果不提供则使用默认权重"
+      },
+      "return_description": "返回JSON格式的违约风险分析数据，包含：发债主体名称、违约概率（0-1之间）、风险等级（低风险/中风险/高风险/极高风险）、风险得分、主要风险因子（财务风险、行业风险、区域风险、舆情风险等）、风险预警信号等字段",
+      "examples": [
+        "analytics_issuer_default_risk('XX集团') -> 返回XX集团的违约风险分析",
+        "analytics_issuer_default_risk('XX集团', include_history=true) -> 返回XX集团的违约风险分析（包含历史数据）"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/default-risk",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "include_history": "<include_history>",
+        "risk_factors": "<risk_factors>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体名称（必填），如：'XX集团'、'XX公司'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "include_history",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含历史违约风险评估（可选，默认false）。设置为true时返回历史风险评估时间序列",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "risk_factors",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "风险因子权重（可选），JSON对象格式，用于自定义风险因子权重。如果不提供则使用默认权重",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_filter_stats",
+      "display_name": "发债主体条件统计",
+      "description": "按条件筛选并统计发债主体指标，支持多条件组合。",
+      "parameter_descriptions": {
+        "industry": "行业筛选（可选）",
+        "region": "区域筛选（可选）",
+        "rating": "评级筛选（可选）",
+        "enterprise_type": "企业性质筛选（可选）",
+        "indicator": "要统计的指标，默认asset_liability_ratio"
+      },
+      "return_description": "返回符合条件的发债主体指标统计结果。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/filter-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "industry": "<industry>",
+        "region": "<region>",
+        "rating": "<rating>",
+        "enterprise_type": "<enterprise_type>",
+        "indicator": "<indicator>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业筛选（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域筛选（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "评级筛选（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "enterprise_type",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "企业性质筛选（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要统计的指标，默认asset_liability_ratio",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_industry_stats",
+      "display_name": "发债主体行业统计",
+      "description": "按行业统计发债主体指标，如平均资产负债率、EBITDA利息保障倍数等。",
+      "parameter_descriptions": {
+        "industry": "行业名称（可选，不填则统计所有行业）",
+        "indicator": "要统计的指标，如：asset_liability_ratio（资产负债率）、ebitda_interest_coverage（EBITDA利息保障倍数），默认asset_liability_ratio"
+      },
+      "return_description": "返回各行业的指标统计结果，包括均值、中位数、标准差等。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/industry-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "industry": "<industry>",
+        "indicator": "<indicator>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业名称（可选，不填则统计所有行业）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要统计的指标，如：asset_liability_ratio（资产负债率）、ebitda_interest_coverage（EBITDA利息保障倍数），默认asset_liability_ratio",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_rating_stats",
+      "display_name": "发债主体评级统计",
+      "description": "按评级统计发债主体指标，如资产负债率、EBITDA利息保障倍数等。适用于需要分析不同评级发债主体特征、评估评级差异等场景。",
+      "parameter_descriptions": {
+        "rating": "评级筛选（可选），如：'AAA'、'AA+'等。如果不提供则统计所有评级",
+        "indicator": "要统计的指标（可选，默认'asset_liability_ratio'），可选值：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各评级的指标统计（均值、最大值、最小值、中位数、标准差等）和发债主体数量",
+      "examples": [
+        "analytics_issuer_rating_stats(rating='AAA', indicator='asset_liability_ratio') -> 返回AAA级发债主体的资产负债率统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/rating-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "rating": "<rating>",
+        "indicator": "<indicator>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "评级筛选（可选），如：'AAA'、'AA+'等。如果不提供则统计所有评级",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要统计的指标（可选，默认'asset_liability_ratio'），可选值：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_region_stats",
+      "display_name": "发债主体区域统计",
+      "description": "按区域统计发债主体指标，如资产负债率、EBITDA利息保障倍数等。适用于需要分析不同区域发债主体特征、评估区域差异等场景。",
+      "parameter_descriptions": {
+        "region": "区域筛选（可选），如：'长三角'、'珠三角'等。如果不提供则统计所有区域",
+        "indicator": "要统计的指标（可选，默认'asset_liability_ratio'），可选值：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各区域的指标统计（均值、最大值、最小值、中位数、标准差等）和发债主体数量",
+      "examples": [
+        "analytics_issuer_region_stats(region='长三角', indicator='asset_liability_ratio') -> 返回长三角地区发债主体的资产负债率统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/region-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "region": "<region>",
+        "indicator": "<indicator>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域筛选（可选），如：'长三角'、'珠三角'等。如果不提供则统计所有区域",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "要统计的指标（可选，默认'asset_liability_ratio'），可选值：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_issuer_risk_region_stats",
+      "display_name": "高风险区域城投统计",
+      "description": "统计高风险区域城投主体占比，分析高风险区域城投主体的分布情况。适用于需要评估区域风险、分析城投主体风险分布等场景。",
+      "parameter_descriptions": {},
+      "return_description": "返回JSON格式的统计结果，包含：城投主体总数、高风险区域城投主体数量、占比、高风险区域列表等字段",
+      "examples": [
+        "analytics_issuer_risk_region_stats() -> 返回高风险区域城投主体的统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/risk-region-stats",
+      "method": "POST",
+      "headers": {},
+      "parameters": {},
+      "enabled": true,
+      "parameter_list": []
+    },
+    {
+      "name": "analytics_issuer_trend_analysis",
+      "display_name": "发债主体趋势分析",
+      "description": "发债主体指标趋势分析，分析指定发债主体的财务指标随时间的变化趋势。适用于需要跟踪发债主体财务状况变化、分析指标趋势等场景。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称（必填），如：'XX集团'、'XX公司'等",
+        "indicator": "要分析的指标（必填），如：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的趋势分析数据，包含：发债主体名称、指标名称、时间序列数据（日期、指标值）等字段",
+      "examples": [
+        "analytics_issuer_trend_analysis('XX集团', 'asset_liability_ratio', '2024-01-01', '2024-12-31') -> 返回XX集团资产负债率的趋势分析"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/issuer/trend-analysis",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "indicator": "<indicator>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体名称（必填），如：'XX集团'、'XX公司'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "要分析的指标（必填），如：'asset_liability_ratio'（资产负债率）、'ebitda_interest_coverage'（EBITDA利息保障倍数）等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_macro_bond_yield_correlation",
+      "display_name": "宏观指标与债券收益率相关性",
+      "description": "宏观指标与债券收益率相关性分析，计算宏观指标（如「10年期国债收益率）与债券收益率的相关性。适用于需要分析宏观环境对债券市场的影响、评估宏观指标与债券收益率关系等场景。",
+      "parameter_descriptions": {
+        "indicator": "宏观指标（必填），如：'10年期国债'。目前主要支持'10年期国债'",
+        "bond_code": "债券代码（可选），如：'123456.SH'。如果不提供则使用第一只债券",
+        "days": "分析天数（可选，默认365），用于计算相关性的时间范围"
+      },
+      "return_description": "返回JSON格式的相关性分析结果，包含：指标名称、债券代码、相关系数、数据点数量等字段",
+      "examples": [
+        "analytics_macro_bond_yield_correlation('10年期国债', '123456.SH', 365) -> 返回10年期国债收益率与该债券收益率的相关性"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/macro/bond-yield-correlation",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicator": "<indicator>",
+        "bond_code": "<bond_code>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "宏观指标（必填），如：'10年期国债'。目前主要支持'10年期国债'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码（可选），如：'123456.SH'。如果不提供则使用第一只债券",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数（可选，默认365），用于计算相关性的时间范围",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_macro_correlation",
+      "display_name": "宏观指标相关性",
+      "description": "计算宏观指标相关性，支持多指标对比。",
+      "parameter_descriptions": {
+        "indicator1": "第一个指标，如：GDP、M2、CPI、PPI",
+        "indicator2": "第二个指标",
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回两个宏观指标的Pearson相关系数。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/macro/correlation",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicator1": "<indicator1>",
+        "indicator2": "<indicator2>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicator1",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第一个指标，如：GDP、M2、CPI、PPI",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator2",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第二个指标",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_macro_forecast",
+      "display_name": "宏观指标预测",
+      "description": "宏观指标预测，基于历史数据预测宏观指标的未来走势。适用于需要进行宏观预测、评估未来趋势等场景。",
+      "parameter_descriptions": {
+        "indicator": "要预测的指标（必填），如：'GDP'、'M2'、'CPI'等",
+        "periods": "预测期数（可选，默认12），用于指定预测多少个周期（月度）"
+      },
+      "return_description": "返回JSON格式的预测结果，包含：指标名称、最后历史值、预测数据（日期、预测值）等字段",
+      "examples": [
+        "analytics_macro_forecast('GDP', 12) -> 返回GDP未来12个月的预测"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/macro/forecast",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicator": "<indicator>",
+        "periods": "<periods>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicator",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "要预测的指标（必填），如：'GDP'、'M2'、'CPI'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "periods",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "预测期数（可选，默认12），用于指定预测多少个周期（月度）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_macro_indicator_comparison",
+      "display_name": "宏观指标互比",
+      "description": "对比指标环比变化，分析多个宏观指标的环比变化趋势。适用于需要分析宏观指标变化、评估指标趋势等场景。",
+      "parameter_descriptions": {
+        "indicators": "指标列表（必填），数组格式，如：['M2']。目前主要支持M2等支持环比数据的指标",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD"
+      },
+      "return_description": "返回JSON格式的对比结果，包含各指标的环比变化时间序列数据",
+      "examples": [
+        "analytics_macro_indicator_comparison(['M2'], '2024-01-01', '2024-12-31') -> 返回M2的环比变化"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/macro/indicator-comparison",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicators": "<indicators>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicators",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "指标列表（必填），数组格式，如：['M2']。目前主要支持M2等支持环比数据的指标",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_macro_indicator_diff",
+      "display_name": "宏观指标差值",
+      "description": "计算指标差值，如CPI-PPI等。",
+      "parameter_descriptions": {
+        "indicator1": "第一个指标，如：CPI",
+        "indicator2": "第二个指标，如：PPI",
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回两个指标的时间序列差值数据。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/macro/indicator-diff",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicator1": "<indicator1>",
+        "indicator2": "<indicator2>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicator1",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第一个指标，如：CPI",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator2",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第二个指标，如：PPI",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_news_category_impact",
+      "display_name": "舆情类别影响",
+      "description": "不同类别舆情的影响分析，分析特定类别舆情（如诉讼纠纷、监管处罚等）对债券收益率的影响。适用于需要评估不同类型舆情的影响、分析舆情类别与市场反应关系等场景。",
+      "parameter_descriptions": {
+        "category": "舆情类别（必填），如：'诉讼纠纷'、'监管处罚'、'财务风险'等",
+        "days": "分析天数（可选，默认30），用于筛选最近多少天内的舆情"
+      },
+      "return_description": "返回JSON格式的影响分析结果，包含：舆情类别、分析期间、新闻数量、分析数量、平均收益率变化、各新闻的影响详情（新闻标题、发债主体、债券代码、事件日期、收益率变化等）等字段",
+      "examples": [
+        "analytics_news_category_impact('诉讼纠纷', 30) -> 返回最近30天内诉讼纠纷类舆情的影响分析"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/news/category-impact",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "category": "<category>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "category",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "舆情类别（必填），如：'诉讼纠纷'、'监管处罚'、'财务风险'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数（可选，默认30），用于筛选最近多少天内的舆情",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_news_sentiment_trend",
+      "display_name": "舆情情感趋势",
+      "description": "舆情情感趋势分析，分析发债主体或行业的舆情情感随时间的变化趋势。适用于需要跟踪舆情变化、分析情感趋势、识别舆情转折点等场景。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称（可选），如：'XX集团'。如果不提供则按行业分析",
+        "industry": "行业名称（可选），如：'房地产'。如果不提供则按发债主体分析",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD"
+      },
+      "return_description": "返回JSON格式的情感趋势数据，包含时间序列数据（日期、正面新闻数、负面新闻数、中性新闻数、总数、各情感占比等）",
+      "examples": [
+        "analytics_news_sentiment_trend(issuer_name='XX集团', '2024-01-01', '2024-12-31') -> 返回XX集团的舆情情感趋势"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/news/sentiment-trend",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "industry": "<industry>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称（可选），如：'XX集团'。如果不提供则按行业分析",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业名称（可选），如：'房地产'。如果不提供则按发债主体分析",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_news_yield_impact",
+      "display_name": "舆情对收益率影响",
+      "description": "分析舆情对收益率的影响，使用事件研究法。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称",
+        "event_date": "事件日期，格式：YYYY-MM-DD",
+        "days_before": "事件前分析天数，默认10天",
+        "days_after": "事件后分析天数，默认10天"
+      },
+      "return_description": "返回事件前后收益率变化，以及收益率变化幅度。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/news/yield-impact",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "event_date": "<event_date>",
+        "days_before": "<days_before>",
+        "days_after": "<days_after>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "event_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "事件日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "days_before",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "事件前分析天数，默认10天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "days_after",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "事件后分析天数，默认10天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_portfolio_attribution",
+      "display_name": "组合归因分析",
+      "description": "组合归因分析，按行业或评级等维度分析组合的收益来源。适用于需要了解组合收益来源、进行归因分析、优化组合配置等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等",
+        "dimension": "归因维度（必填），可选值：'industry'（按行业归因）、'rating'（按评级归因）"
+      },
+      "return_description": "返回JSON格式的归因分析数据，包含：组合ID、归因维度、总市值、总盈亏、各维度的市值占比、盈亏占比、持仓数量等字段",
+      "examples": [
+        "analytics_portfolio_attribution('PORT001', 'industry') -> 返回PORT001组合按行业的归因分析"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/portfolio/attribution",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>",
+        "dimension": "<dimension>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "dimension",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "归因维度（必填），可选值：'industry'（按行业归因）、'rating'（按评级归因）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_portfolio_optimization",
+      "display_name": "组合优化建议",
+      "description": "组合优化建议，基于组合业绩分析、风险分解、归因分析等结果，提供组合优化建议。包括持仓调整建议、风险分散建议、收益提升建议等。适用于需要优化组合配置、提升组合业绩、降低组合风险等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等",
+        "optimization_target": "优化目标（可选，默认'risk_return'），可选值：'risk_return'（风险收益平衡）、'max_return'（最大化收益）、'min_risk'（最小化风险）、'max_sharpe'（最大化夏普比率）",
+        "constraints": "优化约束（可选），JSON对象格式，如：{'max_single_position': 0.1, 'min_rating': 'AA', 'max_industry_concentration': 0.3}。如果不提供则使用默认约束"
+      },
+      "return_description": "返回JSON格式的组合优化建议，包含：组合ID、当前配置分析、优化建议（持仓调整建议、风险分散建议、收益提升建议等）、预期改善效果（预期收益提升、风险降低、夏普比率提升等）、实施步骤等字段",
+      "examples": [
+        "analytics_portfolio_optimization('PORT001') -> 返回PORT001组合的优化建议（风险收益平衡）",
+        "analytics_portfolio_optimization('PORT001', optimization_target='max_sharpe') -> 返回PORT001组合的优化建议（最大化夏普比率）"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/portfolio/optimization",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>",
+        "optimization_target": "<optimization_target>",
+        "constraints": "<constraints>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "optimization_target",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "优化目标（可选，默认'risk_return'），可选值：'risk_return'（风险收益平衡）、'max_return'（最大化收益）、'min_risk'（最小化风险）、'max_sharpe'（最大化夏普比率）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "constraints",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "优化约束（可选），JSON对象格式，如：{'max_single_position': 0.1, 'min_rating': 'AA', 'max_industry_concentration': 0.3}。如果不提供则使用默认约束",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_portfolio_performance",
+      "display_name": "组合业绩分析",
+      "description": "组合业绩分析，计算组合的收益率、波动率、夏普比率等业绩指标，并生成收益率时间序列。适用于需要评估组合业绩、分析组合表现、进行业绩归因等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的组合业绩数据，包含：组合ID、持仓数量、总成本、总市值、总盈亏、总盈亏比例、年化收益率、年化波动率、夏普比率、收益率序列等字段",
+      "examples": [
+        "analytics_portfolio_performance('PORT001', '2024-01-01', '2024-12-31') -> 返回PORT001组合在2024年的业绩分析"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/portfolio/performance",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近一年",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_portfolio_risk_decomposition",
+      "display_name": "组合风险分解",
+      "description": "组合风险分解，将组合风险分解为久期风险、信用风险、流动性风险、市场风险等维度。适用于需要分析组合风险构成、识别主要风险来源、进行风险管控等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等"
+      },
+      "return_description": "返回JSON格式的风险分解数据，包含：组合ID、总市值、风险分解（久期风险、信用风险、流动性风险、市场风险）等字段",
+      "examples": [
+        "analytics_portfolio_risk_decomposition('PORT001') -> 返回PORT001组合的风险分解"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/portfolio/risk-decomposition",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "analytics_portfolio_scenario",
+      "display_name": "组合情景分析",
+      "description": "组合情景分析，包括压力测试和情景模拟。压力测试用于评估收益率冲击对组合的影响，情景模拟用于评估不同市场情景下的组合表现。适用于需要进行风险压力测试、情景分析、风险评估等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等",
+        "scenario_type": "情景类型（必填），可选值：'stress_test'（压力测试）、'scenario_simulation'（情景模拟）",
+        "parameters": "情景参数（可选），JSON对象。压力测试时包含：yield_shock（收益率冲击，如0.01表示1%）。情景模拟时包含：scenarios（情景列表，如['乐观', '中性', '悲观']）"
+      },
+      "return_description": "返回JSON格式的情景分析结果。压力测试包含：情景类型、收益率冲击、当前市值、冲击后市值、损失、损失比例等。情景模拟包含：情景类型、当前市值、各情景的模拟市值、市值变化、市值变化比例等",
+      "examples": [
+        "analytics_portfolio_scenario('PORT001', 'stress_test', {'yield_shock': 0.01}) -> 返回PORT001组合在1%收益率冲击下的压力测试结果"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/portfolio/scenario",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>",
+        "scenario_type": "<scenario_type>",
+        "parameters": "<parameters>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "scenario_type",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "情景类型（必填），可选值：'stress_test'（压力测试）、'scenario_simulation'（情景模拟）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "parameters",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "情景参数（可选），JSON对象。压力测试时包含：yield_shock（收益率冲击，如0.01表示1%）。情景模拟时包含：scenarios（情景列表，如['乐观', '中性', '悲观']）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_correlation",
+      "display_name": "收益率相关性",
+      "description": "收益率相关性分析，计算多只债券收益率之间的相关性。适用于需要分析债券收益率联动性、评估债券组合相关性等场景。",
+      "parameter_descriptions": {
+        "bond_codes": "债券代码列表（必填），数组格式，至少需要2只债券，如：['123456.SH', '789012.SH']",
+        "days": "分析天数（可选，默认30），用于计算相关性的时间范围"
+      },
+      "return_description": "返回JSON格式的相关性分析结果，包含各债券对之间的相关系数",
+      "examples": [
+        "analytics_yield_correlation(['123456.SH', '789012.SH'], 30) -> 返回两只债券收益率的相关性"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/correlation",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_codes": "<bond_codes>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_codes",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码列表（必填），数组格式，至少需要2只债券，如：['123456.SH', '789012.SH']",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数（可选，默认30），用于计算相关性的时间范围",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_maturity_comparison",
+      "display_name": "期限收益率对比",
+      "description": "对比不同期限的收益率，分析期限差异对收益率的影响。适用于需要评估期限溢价、分析期限与收益率关系等场景。",
+      "parameter_descriptions": {
+        "dimension": "对比维度（必填），固定为'maturity'",
+        "value1": "第一个期限范围，如：'1-3年'",
+        "value2": "第二个期限范围，如：'3-5年'",
+        "days": "分析天数（可选，默认30），用于计算平均收益率的时间范围"
+      },
+      "return_description": "返回JSON格式的对比结果，包含两个期限范围的收益率统计（均值、最大值、最小值、标准差等）和收益率差值",
+      "examples": [
+        "analytics_yield_maturity_comparison('maturity', '1-3年', '3-5年', 30) -> 返回1-3年和3-5年期限的收益率对比"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/maturity-comparison",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "dimension": "<dimension>",
+        "value1": "<value1>",
+        "value2": "<value2>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "dimension",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "对比维度（必填），固定为'maturity'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "value1",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第一个期限范围，如：'1-3年'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "value2",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第二个期限范围，如：'3-5年'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数（可选，默认30），用于计算平均收益率的时间范围",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_rating_comparison",
+      "display_name": "评级收益率对比",
+      "description": "对比不同评级的收益率，分析评级差异对收益率的影响。适用于需要评估评级溢价、分析评级与收益率关系等场景。",
+      "parameter_descriptions": {
+        "dimension": "对比维度（必填），固定为'rating'",
+        "value1": "第一个评级，如：'AAA'",
+        "value2": "第二个评级，如：'AA+'",
+        "days": "分析天数（可选，默认30），用于计算平均收益率的时间范围"
+      },
+      "return_description": "返回JSON格式的对比结果，包含两个评级的收益率统计（均值、最大值、最小值、标准差等）和收益率差值",
+      "examples": [
+        "analytics_yield_rating_comparison('rating', 'AAA', 'AA+', 30) -> 返回AAA和AA+评级的收益率对比"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/rating-comparison",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "dimension": "<dimension>",
+        "value1": "<value1>",
+        "value2": "<value2>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "dimension",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "对比维度（必填），固定为'rating'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "value1",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第一个评级，如：'AAA'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "value2",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第二个评级，如：'AA+'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数（可选，默认30），用于计算平均收益率的时间范围",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_region_comparison",
+      "display_name": "区域收益率对比",
+      "description": "对比不同区域的收益率，分析区域差异。",
+      "parameter_descriptions": {
+        "dimension": "对比维度，固定为'region'",
+        "value1": "第一个区域，如：长三角",
+        "value2": "第二个区域，如：珠三角",
+        "days": "分析天数，默认30天"
+      },
+      "return_description": "返回两个区域的收益率对比结果，包括统计指标和差值。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/region-comparison",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "dimension": "<dimension>",
+        "value1": "<value1>",
+        "value2": "<value2>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "dimension",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "对比维度，固定为'region'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "value1",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第一个区域，如：长三角",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "value2",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "第二个区域，如：珠三角",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数，默认30天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_trend",
+      "display_name": "收益率趋势分析",
+      "description": "收益率趋势分析，分析指定债券的收益率随时间的变化趋势，包括移动平均线。适用于需要分析收益率走势、识别趋势变化等场景。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码（必填），如：'123456.SH'",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近30天",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的趋势分析数据，包含：债券代码、债券名称、时间序列数据（日期、收益率、价格、5日移动平均等）等字段",
+      "examples": [
+        "analytics_yield_trend('123456.SH', '2024-01-01', '2024-12-31') -> 返回该债券在2024年的收益率趋势"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/trend",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码（必填），如：'123456.SH'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近30天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_turnover_by_maturity",
+      "display_name": "期限换手率统计",
+      "description": "按剩余期限统计换手率，分析不同期限债券的交易活跃度。适用于需要分析期限与流动性的关系、评估不同期限债券的交易活跃度等场景。",
+      "parameter_descriptions": {
+        "maturity_range": "期限范围（可选），可选值：'1年以内'、'1-3年'、'3-5年'、'5年以上'。如果不提供则统计所有期限"
+      },
+      "return_description": "返回JSON格式的统计结果，包含各期限范围的换手率统计（均值、最大值、最小值、中位数、标准差等）",
+      "examples": [
+        "analytics_yield_turnover_by_maturity(maturity_range='1-3年') -> 返回1-3年期限债券的换手率统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/turnover-by-maturity",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "maturity_range": "<maturity_range>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "maturity_range",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "期限范围（可选），可选值：'1年以内'、'1-3年'、'3-5年'、'5年以上'。如果不提供则统计所有期限",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "analytics_yield_volatility",
+      "display_name": "收益率波动分析",
+      "description": "分析收益率波动情况，包括最高/最低收益率、标准差、波动率等。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码",
+        "days": "分析天数，默认30天"
+      },
+      "return_description": "返回收益率波动统计结果，包括最高、最低、均值、标准差、年化波动率等。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/analytics/yield/volatility",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "days": "<days>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "days",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "分析天数，默认30天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "check_counterparty_risk",
+      "display_name": "检查交易对手风险",
+      "description": "检查交易对手是否属于高风险区域。",
+      "parameter_descriptions": {
+        "counterparty_name": "交易对手名称"
+      },
+      "return_description": "返回交易对手是否属于高风险区域，以及风险区域信息。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/counterparty/risk-check",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "counterparty_name": "<counterparty_name>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "counterparty_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "交易对手名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "check_issuer_sentiment",
+      "display_name": "检查发行人舆情",
+      "description": "检查发行人是否有特定类型舆情，如诉讼、处罚、违约等。",
+      "parameter_descriptions": {
+        "issuer_name": "发行人名称",
+        "category": "舆情类别（可选），可选值: 政策调整, 财务风险, 经营风险, 法律风险, 信用事件, 产能过剩, 诉讼纠纷, 监管处罚"
+      },
+      "return_description": "返回是否存在该类型舆情，以及相关新闻列表。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/news/issuer/sentiment-check",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "category": "<category>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发行人名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "category",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "舆情类别（可选），可选值: 政策调整, 财务风险, 经营风险, 法律风险, 信用事件, 产能过剩, 诉讼纠纷, 监管处罚",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_bond_avg_yield",
+      "display_name": "平均收益率统计",
+      "description": "查询平均收益率，支持按评级、区域、行业、期限等维度统计。",
+      "parameter_descriptions": {
+        "rating": "信用评级（可选），可选值: AAA, AA+, AA, AA-, A+, A, A-, BBB+, BBB, BBB-",
+        "region": "区域（可选），可选值: 长三角, 珠三角, 京津冀, 中西部, 东北, 华北, 华南, 华东, 西南, 西北",
+        "industry": "行业（可选），可选值: 房地产, 新能源, 城投, 制造业, 金融, 互联网科技, 通信设备, 电信, 能源, 交通",
+        "maturity_range": "期限范围（可选），可选值: 1年以内, 1-3年, 3-5年, 5年以上"
+      },
+      "return_description": "返回符合条件的债券平均收益率统计。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/avg-yield",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "rating": "<rating>",
+        "region": "<region>",
+        "industry": "<industry>",
+        "maturity_range": "<maturity_range>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "信用评级（可选），可选值: AAA, AA+, AA, AA-, A+, A, A-, BBB+, BBB, BBB-",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域（可选），可选值: 长三角, 珠三角, 京津冀, 中西部, 东北, 华北, 华南, 华东, 西南, 西北",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业（可选），可选值: 房地产, 新能源, 城投, 制造业, 金融, 互联网科技, 通信设备, 电信, 能源, 交通",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "maturity_range",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "期限范围（可选），可选值: 1年以内, 1-3年, 3-5年, 5年以上",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_bond_basic_info",
+      "display_name": "债券基本信息",
+      "description": "查询债券基本信息，包括票面利率、剩余期限、发行规模、付息方式等。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码，如：123456.SH"
+      },
+      "return_description": "返回债券的基本信息，包括代码、名称、票面利率、剩余期限、发行规模、付息方式等。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/bond/basic-info",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码，如：123456.SH",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_bond_credit_enhancement",
+      "display_name": "债券增信方式",
+      "description": "查询债券的增信方式，如抵押、担保、质押等。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码"
+      },
+      "return_description": "返回债券的增信方式信息。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/bond/credit-enhancement",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_bond_detail",
+      "display_name": "债券详细信息",
+      "description": "查询债券详细信息，包含所有字段。可选择包含发行人信息和相关新闻。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码",
+        "include_issuer": "是否包含发行人信息，默认为false",
+        "include_news": "是否包含相关新闻，默认为false"
+      },
+      "return_description": "返回债券的完整信息，包括所有字段。根据参数可选返回发行人信息和新闻。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/bond/detail",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "include_issuer": "<include_issuer>",
+        "include_news": "<include_news>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "include_issuer",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含发行人信息，默认为false",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "include_news",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含相关新闻，默认为false",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "get_bond_guarantor_info",
+      "display_name": "查询担保人信息",
+      "description": "查询担保人信息，包括注册资本、成立时间、信用评级、担保余额等。",
+      "parameter_descriptions": {
+        "guarantor_name": "担保人名称，支持模糊匹配",
+        "guarantor_id": "担保人ID（可选，与guarantor_name二选一）"
+      },
+      "return_description": "返回担保人的详细信息，包括注册资本、成立时间、信用评级、担保余额等。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/guarantor/info",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "guarantor_name": "<guarantor_name>",
+        "guarantor_id": "<guarantor_id>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "guarantor_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "担保人名称，支持模糊匹配",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "guarantor_id",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "担保人ID（可选，与guarantor_name二选一）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_bond_history_quote",
+      "display_name": "债券历史行情",
+      "description": "查询债券历史行情，支持时间范围查询。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码",
+        "start_date": "开始日期，格式：YYYY-MM-DD",
+        "end_date": "结束日期，格式：YYYY-MM-DD"
+      },
+      "return_description": "返回指定时间范围内的债券历史行情数据。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/history-quote",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "get_bond_issuer_detail",
+      "display_name": "发债主体详情",
+      "description": "查询发债主体的详细信息，包括基本信息、财务指标、股权结构、业务情况等。可选择包含债券列表、评级历史和新闻。适用于需要全面了解发债主体情况、进行信用分析等场景。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称（必填，与issuer_id二选一），支持模糊匹配，例如：'XX集团'。注意：必须提供issuer_name或issuer_id之一",
+        "issuer_id": "发债主体ID（必填，与issuer_name二选一），如果已知主体ID可直接使用，提高查询效率。注意：必须提供issuer_name或issuer_id之一",
+        "include_bonds": "是否包含该主体发行的债券列表（可选，默认false）。设置为true时返回该主体发行的所有债券基本信息",
+        "include_rating_history": "是否包含评级历史（可选，默认false）。设置为true时返回评级变化历史时间序列",
+        "include_news": "是否包含相关新闻（可选，默认false）。设置为true时返回该主体的相关新闻列表"
+      },
+      "return_description": "返回JSON格式的发债主体完整信息，包括：基本信息（名称、类型、行业、区域等）、财务指标（偿债能力、盈利能力、现金流等）、股权结构、业务情况等。根据参数设置，可选返回：债券列表（债券代码、名称、发行规模等）、评级历史（评级变化时间序列）、新闻列表（标题、内容、情感等）",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/issuer/detail",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "issuer_id": "<issuer_id>",
+        "include_bonds": "<include_bonds>",
+        "include_rating_history": "<include_rating_history>",
+        "include_news": "<include_news>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体名称（必填，与issuer_id二选一），支持模糊匹配，例如：'XX集团'。注意：必须提供issuer_name或issuer_id之一",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "issuer_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体ID（必填，与issuer_name二选一），如果已知主体ID可直接使用，提高查询效率。注意：必须提供issuer_name或issuer_id之一",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "include_bonds",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含该主体发行的债券列表（可选，默认false）。设置为true时返回该主体发行的所有债券基本信息",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "include_rating_history",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含评级历史（可选，默认false）。设置为true时返回评级变化历史时间序列",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "include_news",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含相关新闻（可选，默认false）。设置为true时返回该主体的相关新闻列表",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        }
+      ]
+    },
+    {
+      "name": "get_bond_issuer_rating",
+      "display_name": "发债主体评级",
+      "description": "查询发债主体的信用评级信息。支持查询当前评级和历史评级变化。适用于需要了解发债主体信用资质、评估信用风险、跟踪评级变化等场景。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称（必填），支持模糊匹配，例如：'XX集团'、'XX公司'等。系统会匹配最相关的主体",
+        "include_history": "是否包含历史评级（可选，默认false）。设置为true时返回评级变化历史时间序列，便于分析评级趋势和变化原因"
+      },
+      "return_description": "返回JSON格式的发债主体信用评级信息，包括：当前评级（如AAA、AA+、AA等）、评级机构、评级日期、评级展望等。如果include_history为true，则额外返回评级变化历史时间序列，包括历史评级、评级调整日期、调整原因等",
+      "examples": [
+        {
+          "input": {
+            "issuer_name": "XX集团"
+          },
+          "output": "返回XX集团的当前信用评级"
+        }
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/issuer/rating",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "include_history": "<include_history>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "发债主体名称（必填），支持模糊匹配，例如：'XX集团'、'XX公司'等。系统会匹配最相关的主体",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "include_history",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否包含历史评级（可选，默认false）。设置为true时返回评级变化历史时间序列，便于分析评级趋势和变化原因",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_bond_liquidity",
+      "display_name": "债券流动性",
+      "description": "评估债券流动性，基于换手率和成交量计算流动性评分。适用于需要评估债券交易活跃度、判断债券流动性风险、筛选高流动性债券等场景。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码（必填），如：123456.SH"
+      },
+      "return_description": "返回JSON格式的流动性评估数据，包含：债券代码、换手率、成交量、流动性评分（0-100）、流动性等级（高/中/低）等字段",
+      "examples": [
+        "get_bond_liquidity('123456.SH') -> 返回该债券的流动性评估结果"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/liquidity",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码（必填），如：123456.SH",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_bond_quote",
+      "display_name": "债券行情",
+      "description": "查询债券当前成交价格和收益率，支持多只债券批量查询。适用于需要获取债券实时行情、进行价格对比、评估市场表现等场景。",
+      "parameter_descriptions": {
+        "bond_codes": "债券代码列表（必填），格式为数组，例如：['123456.SH', '789012.SH']。支持同时查询多只债券，提高查询效率"
+      },
+      "return_description": "返回JSON格式的债券行情信息，每只债券包含：当前成交价格、收益率、成交量、换手率、买卖价差、最新成交时间等字段。数据按债券代码顺序返回",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/quote",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_codes": "<bond_codes>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_codes",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码列表（必填），格式为数组，例如：['123456.SH', '789012.SH']。支持同时查询多只债券，提高查询效率",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_bond_spread",
+      "display_name": "信用利差",
+      "description": "查询信用利差，计算债券收益率相对于基准利率（如10年期国债）的利差。适用于需要评估信用风险溢价、分析债券相对价值、进行利差分析等场景。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码（必填），如：123456.SH",
+        "benchmark": "基准利率（可选，默认'10年期国债'），用于计算利差的基准。目前支持'10年期国债'"
+      },
+      "return_description": "返回JSON格式的信用利差数据，包含：债券代码、债券收益率、基准名称、基准收益率、利差等字段",
+      "examples": [
+        "get_bond_spread('123456.SH') -> 返回该债券相对于10年期国债的信用利差"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/spread",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "benchmark": "<benchmark>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码（必填），如：123456.SH",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "benchmark",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "基准利率（可选，默认'10年期国债'），用于计算利差的基准。目前支持'10年期国债'",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_bond_trade_details",
+      "display_name": "债券成交明细",
+      "description": "查询债券成交明细，包括时间、价格、成交量、买卖方向等。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码",
+        "start_date": "开始日期，格式：YYYY-MM-DD",
+        "end_date": "结束日期，格式：YYYY-MM-DD",
+        "limit": "返回结果数量限制，默认100"
+      },
+      "return_description": "返回指定时间范围内的债券成交明细。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/trade-details",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制，默认100",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_bond_trade_summary",
+      "display_name": "债券成交汇总",
+      "description": "查询债券成交汇总，支持按日/周/月等周期汇总成交数据。适用于需要分析债券交易活跃度、成交量趋势、价格变化等场景。",
+      "parameter_descriptions": {
+        "bond_code": "债券代码（必填），如：123456.SH",
+        "start_date": "开始日期（必填），格式：YYYY-MM-DD",
+        "end_date": "结束日期（必填），格式：YYYY-MM-DD",
+        "period": "汇总周期（可选，默认'日'），可选值：'日'、'周'、'月'。用于指定按什么周期汇总成交数据"
+      },
+      "return_description": "返回JSON格式的成交汇总数据，按指定周期汇总，包含：周期标识、总成交量、总成交额、成交笔数、平均价格等字段",
+      "examples": [
+        "get_bond_trade_summary('123456.SH', '2024-01-01', '2024-12-31', '月') -> 返回按月汇总的成交数据"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/trade-summary",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "bond_code": "<bond_code>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "period": "<period>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "bond_code",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "债券代码（必填），如：123456.SH",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "开始日期（必填），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "结束日期（必填），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "period",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "汇总周期（可选，默认'日'），可选值：'日'、'周'、'月'。用于指定按什么周期汇总成交数据",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_bond_yield_curve",
+      "display_name": "收益率曲线",
+      "description": "查询收益率曲线，按不同期限统计平均收益率。适用于需要分析利率期限结构、评估不同期限债券收益率水平、构建收益率曲线等场景。",
+      "parameter_descriptions": {
+        "rating": "信用评级（可选），如：AAA、AA+、AA等。如果提供则仅统计该评级的债券，如果不提供则统计所有评级",
+        "date": "查询日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的收益率曲线数据，包含各期限（1年以内、1-3年、3-5年、5-7年、7-10年、10年以上）的平均收益率和债券数量",
+      "examples": [
+        "get_bond_yield_curve(rating='AAA') -> 返回AAA级债券的收益率曲线"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/bond/yield-curve",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "rating": "<rating>",
+        "date": "<date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "信用评级（可选），如：AAA、AA+、AA等。如果提供则仅统计该评级的债券，如果不提供则统计所有评级",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "查询日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_entity_indicator_data",
+      "display_name": "获取主体指标数据",
+      "description": "根据主体名称、指标代码和时间范围查询主体指标的时间序列数据。支持按日期范围筛选，可控制返回数据量。适用于需要获取主体指标历史数据、进行趋势分析、绘制图表等场景。\n\n⚠️ 依赖关系：使用此工具前，建议先调用 search_indicators 工具获取指标代码，先调用 search_entities 工具确认主体名称。",
+      "parameter_descriptions": {
+        "entity_name": "主体名称（必填），支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会匹配最相关的主体",
+        "indicator_code": "指标代码（必填），例如：\"REVENUE\"（营业收入）、\"NET_PROFIT\"（净利润）、\"ASSET_LIABILITY_RATIO\"（资产负债率）等。必须先通过search_indicators工具查询主体指标获取指标代码",
+        "start_date": "开始日期（可选），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。如果提供则仅返回该日期之后的数据，如果为空则查询所有可用数据",
+        "end_date": "结束日期（可选），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。如果提供则仅返回该日期之前的数据，如果为空则查询所有可用数据。建议与start_date同时提供以限定查询范围",
+        "limit": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当数据量较大时，建议设置合理的limit值"
+      },
+      "return_description": "返回JSON格式的主体指标时间序列数据，包含：date（日期）、value（数值）、event（相关事件，如有）等字段。同时包含可视化提示信息，便于前端绘制图表。数据按日期升序排列",
+      "examples": [
+        "get_entity_indicator_data(\"阿里巴巴\", \"REVENUE\", \"2024-01-01\", \"2024-12-31\") -> 返回阿里巴巴的营业收入数据",
+        "get_entity_indicator_data(\"腾讯\", \"NET_PROFIT\", \"2024-06-01\", \"2024-12-31\") -> 返回腾讯的净利润数据"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/entities/indicators/data",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "entity_name": "<entity_name>",
+        "indicator_code": "<indicator_code>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "entity_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "主体名称（必填），支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会匹配最相关的主体",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator_code",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "指标代码（必填），例如：\"REVENUE\"（营业收入）、\"NET_PROFIT\"（净利润）、\"ASSET_LIABILITY_RATIO\"（资产负债率）等。必须先通过search_indicators工具查询主体指标获取指标代码",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。如果提供则仅返回该日期之后的数据，如果为空则查询所有可用数据",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。如果提供则仅返回该日期之前的数据，如果为空则查询所有可用数据。建议与start_date同时提供以限定查询范围",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当数据量较大时，建议设置合理的limit值",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        }
+      ]
+    },
+    {
+      "name": "get_entity_info",
+      "display_name": "获取主体信息",
+      "description": "查询主体的综合信息，包括主体基本信息和相关指标数据概览。支持按指标关键词筛选，按时间范围过滤。适用于需要快速了解主体概况、获取指标数据概览等场景。",
+      "parameter_descriptions": {
+        "entity_name": "主体名称（必填），支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会匹配最相关的主体",
+        "indicator_query": "查询指标（可选），支持多关键词查询，例如：\"营业收入\"、\"财务 利润\"等。如果提供则仅返回匹配的指标，如果为空则返回所有可用指标",
+        "start_date": "事件范围开始日期（可选），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。用于筛选指定时间范围内的指标数据",
+        "end_date": "事件范围结束日期（可选），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。必须与start_date同时提供或同时为空",
+        "limit": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的指标数据条数"
+      },
+      "return_description": "返回JSON格式的主体综合信息，包括：主体基本信息（名称、类型、行业、区域等）和相关指标数据概览（指标名称、指标代码、最新数值、单位等）。如果提供了时间范围，则返回该时间范围内的数据统计信息",
+      "examples": [
+        "get_entity_info(\"阿里巴巴\", \"营业收入\", \"2024-01-01\", \"2024-12-31\") -> 返回阿里巴巴的营业收入数据",
+        "get_entity_info(\"腾讯\", \"财务\", \"2024-06-01\", \"2024-12-31\") -> 返回腾讯的财务相关指标数据"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/entities/info",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "entity_name": "<entity_name>",
+        "indicator_query": "<indicator_query>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "entity_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "主体名称（必填），支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会匹配最相关的主体",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "indicator_query",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "查询指标（可选），支持多关键词查询，例如：\"营业收入\"、\"财务 利润\"等。如果提供则仅返回匹配的指标，如果为空则返回所有可用指标",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "事件范围开始日期（可选），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。用于筛选指定时间范围内的指标数据",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "事件范围结束日期（可选），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。必须与start_date同时提供或同时为空",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的指标数据条数",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        }
+      ]
+    },
+    {
+      "name": "get_green_bonds",
+      "display_name": "绿色债券列表",
+      "description": "查询绿色信用债列表，支持按时间范围和行业筛选。",
+      "parameter_descriptions": {
+        "start_date": "开始日期，格式：YYYY-MM-DD",
+        "end_date": "结束日期，格式：YYYY-MM-DD",
+        "industry": "行业筛选（可选）",
+        "limit": "返回结果数量限制，默认100"
+      },
+      "return_description": "返回符合条件的绿色信用债列表。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/bond/green-list",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "industry": "<industry>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期，格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业筛选（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制，默认100",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_hot_bonds",
+      "display_name": "热门债券",
+      "description": "查询热门债券，按成交量或换手率排序，获取市场最活跃的债券。适用于需要发现市场热点、分析热门债券、寻找交易机会等场景。",
+      "parameter_descriptions": {
+        "sort_by": "排序方式（可选，默认'volume'），可选值：'volume'（按成交量排序）、'turnover'（按换手率排序）",
+        "limit": "返回结果数量限制（可选，默认20），用于控制返回的债券数量"
+      },
+      "return_description": "返回JSON格式的热门债券列表，每条包含：债券代码、债券名称、成交量、换手率、价格、收益率等字段，按指定方式排序",
+      "examples": [
+        "get_hot_bonds(sort_by='turnover', limit=10) -> 返回换手率最高的10只债券"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/market/hot-bonds",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "sort_by": "<sort_by>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "sort_by",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "排序方式（可选，默认'volume'），可选值：'volume'（按成交量排序）、'turnover'（按换手率排序）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制（可选，默认20），用于控制返回的债券数量",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_indicator_data",
+      "display_name": "获取指标数据",
+      "description": "根据指标ID和时间范围查询宏观指标的时间序列数据。支持按日期范围筛选，可控制返回数据量。适用于需要获取指标历史数据、进行趋势分析、绘制图表等场景。\n\n⚠️ 依赖关系：使用此工具前，必须先调用 search_indicators 工具获取指标ID。",
+      "parameter_descriptions": {
+        "indicator_id": "指标ID（必填），例如 \"IND001\"、\"IND002\" 等。必须先通过search_indicators工具查询宏观指标获取指标ID，然后使用该ID查询数据",
+        "start_date": "开始日期（必填），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。查询数据的时间范围起始点",
+        "end_date": "结束日期（必填），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。查询数据的时间范围结束点。结束日期应晚于或等于开始日期",
+        "limit": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当数据量较大时，建议设置合理的limit值以提高响应速度"
+      },
+      "return_description": "返回JSON格式的指标时间序列数据，包含：date（日期）、value（数值）、period（周期，如月度、季度、年度）等字段。同时包含可视化提示信息，便于前端绘制图表。数据按日期升序排列",
+      "examples": [
+        "get_indicator_data(\"IND001\", \"2024-01-01\", \"2024-12-31\") -> 返回GDP在2024年的数据",
+        "get_indicator_data(\"IND002\", \"2024-06-01\", \"2024-06-30\") -> 返回CPI在2024年6月的数据"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/indicators/data",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "indicator_id": "<indicator_id>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "indicator_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "指标ID（必填），例如 \"IND001\"、\"IND002\" 等。必须先通过search_indicators工具查询宏观指标获取指标ID，然后使用该ID查询数据",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "开始日期（必填），格式为 YYYY-MM-DD，例如 \"2024-01-01\"。查询数据的时间范围起始点",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "结束日期（必填），格式为 YYYY-MM-DD，例如 \"2024-12-31\"。查询数据的时间范围结束点。结束日期应晚于或等于开始日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当数据量较大时，建议设置合理的limit值以提高响应速度",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_industry_negative_news",
+      "display_name": "行业负面新闻",
+      "description": "查询行业负面舆情新闻，支持行业筛选和时间范围。",
+      "parameter_descriptions": {
+        "industry": "行业名称，如：新能源、房地产等",
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）",
+        "limit": "返回结果数量限制，默认100"
+      },
+      "return_description": "返回行业负面舆情新闻列表。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/news/industry/negative",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "industry": "<industry>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业名称，如：新能源、房地产等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制，默认100",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_issuer_news_count",
+      "display_name": "发债主体新闻计数",
+      "description": "统计发债主体相关新闻数量，支持时间范围和情感筛选。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称",
+        "start_date": "开始日期，格式：YYYY-MM-DD（可选）",
+        "end_date": "结束日期，格式：YYYY-MM-DD（可选）",
+        "sentiment": "情感筛选（可选），可选值: 正面, 负面, 中性"
+      },
+      "return_description": "返回符合条件的新闻数量统计。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/news/issuer/count",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "sentiment": "<sentiment>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期，格式：YYYY-MM-DD（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期，格式：YYYY-MM-DD（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "sentiment",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "情感筛选（可选），可选值: 正面, 负面, 中性",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_issuer_news_list",
+      "display_name": "发债主体新闻列表",
+      "description": "查询发债主体相关新闻列表，支持分页和排序。",
+      "parameter_descriptions": {
+        "issuer_name": "发债主体名称",
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）",
+        "sentiment": "情感筛选（可选），可选值: 正面, 负面, 中性",
+        "page": "页码，默认1",
+        "page_size": "每页数量，默认20"
+      },
+      "return_description": "返回新闻列表，包含标题、内容、情感、类别等信息。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/news/issuer/list",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "issuer_name": "<issuer_name>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "sentiment": "<sentiment>",
+        "page": "<page>",
+        "page_size": "<page_size>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "sentiment",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "情感筛选（可选），可选值: 正面, 负面, 中性",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "page",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "页码，默认1",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        },
+        {
+          "param_name": "page_size",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "每页数量，默认20",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 5
+        }
+      ]
+    },
+    {
+      "name": "get_macro_bond_yield",
+      "display_name": "国债收益率",
+      "description": "查询国债收益率，支持不同期限（1年、3年、5年、10年、30年）。适用于需要了解无风险利率水平、分析利率曲线、评估债券定价基准等场景。",
+      "parameter_descriptions": {
+        "maturity": "期限（可选，默认10年），可选值：'1年'、'3年'、'5年'、'10年'、'30年'。不同期限的国债收益率反映不同期限的利率水平，10年期通常作为基准利率"
+      },
+      "return_description": "返回JSON格式的国债收益率数据，包括：收益率数值、日期、期限等信息。可用于构建利率曲线、分析利率趋势等",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/macro/bond-yield",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "maturity": "<maturity>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "maturity",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "期限（可选，默认10年），可选值：'1年'、'3年'、'5年'、'10年'、'30年'。不同期限的国债收益率反映不同期限的利率水平，10年期通常作为基准利率",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_macro_cpi_growth",
+      "display_name": "CPI增速",
+      "description": "查询CPI同比增速，支持月度、年度数据。",
+      "parameter_descriptions": {
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回CPI同比增速数据。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/macro/cpi-growth",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_macro_gdp_growth",
+      "display_name": "GDP增速",
+      "description": "查询GDP增速，支持季度和年度数据，支持同比和环比。",
+      "parameter_descriptions": {
+        "period": "数据频率，如：季度、年度，默认季度",
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回GDP增速数据，包括同比和环比增速。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/macro/gdp-growth",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "period": "<period>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "period",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "数据频率，如：季度、年度，默认季度",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "get_macro_m2_growth",
+      "display_name": "M2增速",
+      "description": "查询M2增速，支持月度、年度数据，支持同比、环比。",
+      "parameter_descriptions": {
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回M2增速数据。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/macro/m2-growth",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_macro_ppi_growth",
+      "display_name": "PPI增速",
+      "description": "查询PPI同比增速，支持月度、年度数据。",
+      "parameter_descriptions": {
+        "start_date": "开始日期（可选）",
+        "end_date": "结束日期（可选）"
+      },
+      "return_description": "返回PPI同比增速数据。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/macro/ppi-growth",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选）",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "get_market_overview",
+      "display_name": "市场概览",
+      "description": "查询市场概览，获取债券市场的整体情况，包括活跃债券数量、总成交量、平均换手率等。适用于需要了解市场整体情况、进行市场分析等场景。",
+      "parameter_descriptions": {
+        "date": "查询日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的市场概览数据，包含：日期、活跃债券数量、总成交量、平均换手率等字段",
+      "examples": [
+        "get_market_overview('2024-12-01') -> 返回2024年12月1日的市场概览"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/market/overview",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "date": "<date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "查询日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_portfolio_holdings",
+      "display_name": "持仓信息",
+      "description": "查询持仓信息，获取指定组合的所有持仓明细。适用于需要查看组合持仓、分析持仓结构、进行持仓管理等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等"
+      },
+      "return_description": "返回JSON格式的持仓列表，每条持仓包含：债券代码、债券名称、持仓数量、成本价、市价、市值、盈亏、盈亏比例等字段",
+      "examples": [
+        "get_portfolio_holdings('PORT001') -> 返回PORT001组合的所有持仓"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/portfolio/holdings",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_portfolio_risk_metrics",
+      "display_name": "持仓风险指标",
+      "description": "查询持仓风险指标，计算组合的加权平均久期等风险指标。适用于需要评估组合风险、进行风险分析、计算风险指标等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等"
+      },
+      "return_description": "返回JSON格式的风险指标数据，包含：组合ID、加权平均久期、持仓数量、总市值等字段",
+      "examples": [
+        "get_portfolio_risk_metrics('PORT001') -> 返回PORT001组合的风险指标"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/portfolio/risk-metrics",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_portfolio_valuation",
+      "display_name": "持仓估值",
+      "description": "查询持仓估值，计算指定组合的总成本、总市值、总盈亏等估值指标。适用于需要评估组合价值、计算组合收益、进行组合估值等场景。",
+      "parameter_descriptions": {
+        "portfolio_id": "组合ID（必填），如：'PORT001'、'PORT002'等"
+      },
+      "return_description": "返回JSON格式的估值数据，包含：组合ID、总成本、总市值、总盈亏、总盈亏比例、持仓数量等字段",
+      "examples": [
+        "get_portfolio_valuation('PORT001') -> 返回PORT001组合的估值情况"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/portfolio/valuation",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "portfolio_id": "<portfolio_id>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "portfolio_id",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "组合ID（必填），如：'PORT001'、'PORT002'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        }
+      ]
+    },
+    {
+      "name": "get_trader_records",
+      "display_name": "交易员交易记录",
+      "description": "查询交易员交易记录，获取指定交易员在指定时间范围内的所有交易明细。适用于需要分析交易员交易行为、评估交易绩效、进行交易审计等场景。",
+      "parameter_descriptions": {
+        "trader_name": "交易员名称（必填），如：'张三'、'李四'等",
+        "start_date": "开始日期（必填），格式：YYYY-MM-DD",
+        "end_date": "结束日期（必填），格式：YYYY-MM-DD",
+        "limit": "返回结果数量限制（可选，默认100），用于控制返回的交易记录数量"
+      },
+      "return_description": "返回JSON格式的交易记录列表，每条记录包含：交易时间、债券代码、交易方向（买入/卖出）、价格、成交量、成交金额等字段",
+      "examples": [
+        "get_trader_records('张三', '2024-01-01', '2024-12-31') -> 返回张三在2024年的所有交易记录"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/trader/records",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "trader_name": "<trader_name>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "trader_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "交易员名称（必填），如：'张三'、'李四'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "开始日期（必填），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "结束日期（必填），格式：YYYY-MM-DD",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制（可选，默认100），用于控制返回的交易记录数量",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        }
+      ]
+    },
+    {
+      "name": "get_trader_statistics",
+      "display_name": "交易员交易统计",
+      "description": "查询交易员交易统计，汇总指定交易员在指定时间范围内的交易数据。适用于需要评估交易员绩效、分析交易风格、进行交易统计等场景。",
+      "parameter_descriptions": {
+        "trader_name": "交易员名称（必填），如：'张三'、'李四'等",
+        "start_date": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近30天",
+        "end_date": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期"
+      },
+      "return_description": "返回JSON格式的交易统计数据，包含：交易员名称、统计周期、总交易笔数、买入笔数、卖出笔数、总成交量、总成交额等字段",
+      "examples": [
+        "get_trader_statistics('张三', '2024-01-01', '2024-12-31') -> 返回张三在2024年的交易统计"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/trading/trader/statistics",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "trader_name": "<trader_name>",
+        "start_date": "<start_date>",
+        "end_date": "<end_date>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "trader_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "交易员名称（必填），如：'张三'、'李四'等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "start_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "开始日期（可选），格式：YYYY-MM-DD。如果不提供则使用最近30天",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "end_date",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "结束日期（可选），格式：YYYY-MM-DD。如果不提供则使用当前日期",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    },
+    {
+      "name": "search_bond_issuers",
+      "display_name": "搜索发债主体",
+      "description": "搜索发债主体列表，支持按名称、行业、区域、评级、企业性质等条件筛选。",
+      "parameter_descriptions": {
+        "name": "发债主体名称，支持模糊匹配",
+        "industry": "行业分类，如：房地产、新能源、城投、制造业、金融等",
+        "region": "区域分类，如：长三角、珠三角、京津冀等",
+        "rating": "信用评级，如：AAA、AA+、AA等",
+        "enterprise_type": "企业性质，如：国企、央企、民企、外资等",
+        "limit": "返回结果数量限制，默认100，最大1000"
+      },
+      "return_description": "返回符合条件的发债主体列表，包含基本信息。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/issuer/list",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "name": "<name>",
+        "industry": "<industry>",
+        "region": "<region>",
+        "rating": "<rating>",
+        "enterprise_type": "<enterprise_type>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发债主体名称，支持模糊匹配",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业分类，如：房地产、新能源、城投、制造业、金融等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域分类，如：长三角、珠三角、京津冀等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "信用评级，如：AAA、AA+、AA等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "enterprise_type",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "企业性质，如：国企、央企、民企、外资等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制，默认100，最大1000",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 5
+        }
+      ]
+    },
+    {
+      "name": "search_bonds",
+      "display_name": "搜索债券",
+      "description": "搜索债券列表，支持按代码、名称、发行人、类型、评级、行业、区域、是否绿色债券等条件筛选。",
+      "parameter_descriptions": {
+        "code": "债券代码，支持模糊匹配",
+        "name": "债券名称，支持模糊匹配",
+        "issuer_name": "发行人名称",
+        "bond_type": "债券类型，如：信用债、城投债、产业债等",
+        "rating": "信用评级",
+        "industry": "行业分类",
+        "region": "区域分类",
+        "is_green": "是否绿色债券，true/false",
+        "limit": "返回结果数量限制，默认100"
+      },
+      "return_description": "返回符合条件的债券列表。",
+      "examples": [],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/bonds/bond/list",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "code": "<code>",
+        "name": "<name>",
+        "issuer_name": "<issuer_name>",
+        "bond_type": "<bond_type>",
+        "rating": "<rating>",
+        "industry": "<industry>",
+        "region": "<region>",
+        "is_green": "<is_green>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "code",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券代码，支持模糊匹配",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券名称，支持模糊匹配",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "issuer_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "发行人名称",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        },
+        {
+          "param_name": "bond_type",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "债券类型，如：信用债、城投债、产业债等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 3
+        },
+        {
+          "param_name": "rating",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "信用评级",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 4
+        },
+        {
+          "param_name": "industry",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "行业分类",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 5
+        },
+        {
+          "param_name": "region",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "区域分类",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 6
+        },
+        {
+          "param_name": "is_green",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "是否绿色债券，true/false",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 7
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回结果数量限制，默认100",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 8
+        }
+      ]
+    },
+    {
+      "name": "search_entities",
+      "display_name": "主体搜索",
+      "description": "根据主体名称进行多关键词模糊查询，搜索企业、机构等主体信息。支持多关键词组合搜索，提高搜索准确性。适用于需要查找主体基本信息、搜索符合条件的主体列表等场景。",
+      "parameter_descriptions": {
+        "entity_name": "主体名称（必填），支持多个关键词用空格分隔进行组合搜索，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会进行模糊匹配，返回包含这些关键词的主体",
+        "limit": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当搜索结果较多时，建议设置合理的limit值"
+      },
+      "return_description": "返回JSON格式的主体列表，每个主体包含：id（主体ID，用于后续查询）、name（主体中文名称）、name_en（主体英文名称）、type（主体类型，如企业、机构等）、description（主体描述）、industry（所属行业）、region（所属区域）等字段",
+      "examples": [
+        "search_entities(\"阿里巴巴\") -> 返回包含\"阿里巴巴\"的主体",
+        "search_entities(\"腾讯 科技\") -> 返回同时包含\"腾讯\"和\"科技\"的主体"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/entities/search",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "entity_name": "<entity_name>",
+        "limit": "<limit>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "entity_name",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "主体名称（必填），支持多个关键词用空格分隔进行组合搜索，例如：\"阿里巴巴\"、\"腾讯 科技\"等。系统会进行模糊匹配，返回包含这些关键词的主体",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "limit",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "返回数据条数限制（可选，默认100，最大1000），用于控制返回的数据量。当搜索结果较多时，建议设置合理的limit值",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        }
+      ]
+    },
+    {
+      "name": "search_indicators",
+      "display_name": "指标搜索",
+      "description": "统一的指标查询工具，支持搜索宏观指标定义和主体指标。可以按指标名称、分类、描述进行多关键词搜索，支持模糊匹配。适用于需要查找指标定义、了解指标含义、获取指标代码等场景。",
+      "parameter_descriptions": {
+        "query": "搜索关键词（必填），支持多个关键词用空格分隔进行组合搜索，提高搜索准确性。例如：\"GDP\"、\"价格指数\"、\"消费价格指数 CPI\"、\"营业收入 财务\"等",
+        "entity_name": "主体名称（可选），当查询主体指标时必须提供。支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。如果为空则查询宏观指标",
+        "indicator_type": "指标类型（可选），用于指定查询范围：\"macro\"表示仅查询宏观指标，\"entity\"表示仅查询主体指标，\"auto\"表示自动判断（根据是否提供entity_name）。默认值为\"auto\""
+      },
+      "return_description": "返回JSON格式的指标列表。查询宏观指标时包含：id（指标ID，用于后续数据查询）、name（指标中文名称）、name_en（指标英文名称）、category（指标分类）、description（指标描述）、unit（单位）等字段。查询主体指标时包含：indicator_name（指标名称）、indicator_code（指标代码，用于后续数据查询）、unit（单位）等字段",
+      "examples": [
+        "search_indicators(\"GDP\") -> 返回包含GDP的宏观指标定义",
+        "search_indicators(\"营业收入\", entity_name=\"阿里巴巴\") -> 返回阿里巴巴的营业收入指标"
+      ],
+      "api_base_url": "http://localhost:8001",
+      "api_endpoint": "/api/indicators/search",
+      "method": "POST",
+      "headers": {},
+      "parameters": {
+        "query": "<query>",
+        "entity_name": "<entity_name>",
+        "indicator_type": "<indicator_type>"
+      },
+      "enabled": true,
+      "parameter_list": [
+        {
+          "param_name": "query",
+          "param_type": "string",
+          "required": true,
+          "default_value": null,
+          "description": "搜索关键词（必填），支持多个关键词用空格分隔进行组合搜索，提高搜索准确性。例如：\"GDP\"、\"价格指数\"、\"消费价格指数 CPI\"、\"营业收入 财务\"等",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 0
+        },
+        {
+          "param_name": "entity_name",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "主体名称（可选），当查询主体指标时必须提供。支持多关键词模糊查询，例如：\"阿里巴巴\"、\"腾讯 科技\"等。如果为空则查询宏观指标",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 1
+        },
+        {
+          "param_name": "indicator_type",
+          "param_type": "string",
+          "required": false,
+          "default_value": null,
+          "description": "指标类型（可选），用于指定查询范围：\"macro\"表示仅查询宏观指标，\"entity\"表示仅查询主体指标，\"auto\"表示自动判断（根据是否提供entity_name）。默认值为\"auto\"",
+          "param_location": "body",
+          "validation_rules": {},
+          "param_order": 2
+        }
+      ]
+    }
+  ]
+}

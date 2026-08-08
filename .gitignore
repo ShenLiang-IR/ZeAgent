@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# pytest
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# JoyinCode/Sisyphus 运行时
+.joyincode/
+.sisyphus/
+.superpowers/
+.omo/
+
+# 日志/输出
+logs/
+*.log
+out.log
+
+# 数据
+data/
+*.db
+
+# 环境配置
+.env
+.env.local
+
+# Node/frontend
+node_modules/
+frontend/dist/
+
+# 临时/空文件
+*.tmp
+nul
+
+# MCP playwright
+.playwright-mcp/
+
+# 导出数据
+export_*.json
+
+# 本地 embedding 模型目录（大文件，不入库）
+bge-small-zh-v1___5/
+
+# 迭代备份目录（不入库）
+.backup_before_iter*/
+
+# 截图/调试图片
+*.png
+
+# 测试文档
+58.pdf
+XX号集合资产管理计划.md
+当前文档分析.docx
+
+# 依赖锁定文件备份（pip freeze 重新生成前的快照，不入库）
+*.bak
+requirements.txt.bak

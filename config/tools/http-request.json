@@ -1,0 +1,7 @@
+{
+    "display_name": "HTTP 请求",
+    "description": "发送 HTTP 请求（GET/POST/PUT/DELETE），支持自定义 headers、body、超时。类似 Dify 的 HTTP 节点。",
+    "parameter_descriptions": {},
+    "return_description": "JSON 格式响应，包含 status_code、headers、body",
+    "examples": []
+}

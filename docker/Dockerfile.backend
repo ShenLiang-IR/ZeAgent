@@ -1,0 +1,51 @@
+# ─── build 阶段：装依赖 ───
+FROM python:3.13-slim AS builder
+WORKDIR /app
+
+# 系统依赖（pymysql/sqlalchemy 编译需要的）
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc default-libmysqlclient-dev pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+
+# 装主依赖（不含 RAG，避免 torch 5GB+）
+# 需要装 RAG 的镜像构建：docker build --build-arg INSTALL_RAG=true -f Dockerfile.backend .
+ARG INSTALL_RAG=false
+COPY requirements.txt requirements.rag.txt ./
+RUN if [ "$INSTALL_RAG" = "true" ]; then \
+        # 装 RAG（含 torch CPU 版，~5GB 额外体积）
+        pip install --no-cache-dir -r requirements.rag.txt; \
+    fi && \
+    pip install --no-cache-dir -r requirements.txt
+
+# ─── runtime 阶段：精简镜像 ───
+FROM python:3.13-slim AS runtime
+WORKDIR /app
+
+# 运行时系统依赖（mysqlclient 运行时只需 client 库）+ curl 用于健康检查
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    default-mysql-client curl && \
+    rm -rf /var/lib/apt/lists/* && \
+    # 非 root 用户（合规底线）
+    useradd -m -u 1000 agent
+
+# 从 builder 复制已装的 Python 包
+COPY --from=builder /usr/local/lib/python3.13/site-packages /usr/local/lib/python3.13/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# 复制项目代码（.dockerignore 排除 node_modules/.git 等）
+COPY --chown=agent:agent . /app
+
+# 数据/配置/日志目录
+# 注意：logging_utils.py 用 Path(__file__).parent×5 / "logs" 推算日志目录，
+# 在容器内等于 /logs（绝对路径），需预创建并 chown 给非 root 用户
+RUN mkdir -p /app/data /app/logs /logs && chown -R agent:agent /app/data /app/logs /logs
+
+USER agent
+EXPOSE 8072
+
+# 健康检查：根路径返回 status
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=30s \
+    CMD curl -fsS http://localhost:8072/health || exit 1
+
+# 生产启动命令：多 worker（需配合 SQLAlchemyJobStore 持久化，避免多进程重复触发 cron）
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8072", "--workers", "4"]

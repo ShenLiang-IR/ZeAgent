@@ -1,0 +1,54 @@
+# ─── 排除不必要的文件，减小构建上下文 ───
+
+# Git
+.git
+.gitignore
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.swp
+.DS_Store
+Thumbs.db
+
+# 前端构建产物（容器内重新构建）
+frontend/node_modules/
+frontend/dist/
+
+# Docker 自身（避免递归）
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# 测试数据
+test_data/
+.pytest_cache/
+.sisyphus/
+.superpowers/
+.playwright-mcp/
+
+# 模型/数据（容器内挂载 volume 提供）
+bge-small-zh-v1___5/
+*.pdf
+export_*.json

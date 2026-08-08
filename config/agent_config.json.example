@@ -1,0 +1,441 @@
+{
+  "llm": {
+    "default": {
+      "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "model": "qwen3-8b",
+      "api_key": "YOUR_API_KEY",
+      "_comment_api_key": "API Key 优先从环境变量 OPENAI_API_KEY、LLM_API_KEY 或 API_KEY 读取，其次从 config.py 读取",
+      "temperature": 0.1,
+      "max_tokens": 5000,
+      "enable_thinking": true,
+      "_comment_enable_thinking": "是否开启思考模式（适用于 Qwen3、Qwen3-Omni-Flash、Qwen3-VL 等混合思考模型）。开启后，思考内容将通过 reasoning_content 字段返回",
+      "parallel_tool_calls": true,
+      "_comment_parallel_tool_calls": "并行工具调用，重要，开启后模型可以同时调用多个工具",
+      "request_headers": {
+        "enabled": true,
+        "_comment_enabled": "是否启用业务追踪请求头，启用后会在LLM请求中添加 globalBusiTrackNo 等参数",
+        "send_sys_or_cmpt_no": "99714490000",
+        "_comment_send_sys_or_cmpt_no": "发起方系统代码",
+        "start_sys_or_cmpt_no": "99714490000",
+        "_comment_start_sys_or_cmpt_no": "发起方系统代码",
+        "scene_id": "0060",
+        "_comment_scene_id": "场景编号",
+        "_comment": "globalBusiTrackNo 会自动生成32位UUID，无需配置"
+      }
+    },
+    "_comment_providers": "providers 为可选配置，用于定义多个 LLM 提供商"
+  },
+  "internal_parse": {
+    "_comment": "内网异步文件解析服务配置",
+    "api_key": "your-internal-api-key",
+    "base_url": "http://internal-parse-service:8080",
+    "expire_seconds": 1800,
+    "timeout": 600,
+    "poll_interval": 5,
+    "global_busi_track_no": "20251117101388888888",
+    "send_sys_or_cmpt_no": "1111111111",
+    "start_sys_or_cmpt_no": "1111111111",
+    "busi_send_inst_no": "12345678",
+    "scene_id": "1234",
+    "parse_service": "OCRS",
+    "parse_type": "MARKDOWN_FORMAT",
+    "enable_process_table_metadata": "True",
+    "enable_process_table_cell_data": "True",
+    "enable_tag_check": "False",
+    "enable_title_correction": "True",
+    "rag_llm_max_tries": 2,
+    "_comment_rag_llm_max_tries": "RAG 页面索引调大模型最大尝试次数，不配置默认2次"
+  },
+  "agent": {
+    "recursion_limit": 25,
+    "_comment_recursion_limit": "LangGraph 递归步数限制（默认 25，约 8-10 次工具调用）",
+    "debug": false,
+    "_comment_debug": "是否启用调试模式，影响日志输出和错误处理",
+    "enable_execution_panel": false,
+    "_comment_enable_execution_panel": "是否启用执行面板，用于展示工作流执行详情",
+    "backend": "langgraph",
+    "_comment_backend": "Agent 后端引擎: 'langgraph'(默认,ReAct) | 'deepagents'(深度思考) | 'planning'(LLM 自主规划，等价于 auto_plan=true)",
+    "auto_plan": false,
+    "_comment_auto_plan": "是否启用 LLM 自主规划（true 时走 PlanExecutor：LLM 据用户请求+可用 agent 能力卡，自动决定调用哪些 agent + mode + 依赖，生成 ExecutionPlan 并编排执行）。与 backend 正交，默认 false",
+    "react": {
+      "disable_thinking": false,
+      "_comment_disable_thinking": "ReAct 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）",
+      "efficient_execution": true
+    },
+    "deep_agent": {
+      "disable_thinking": false,
+      "_comment_disable_thinking": "DeepAgent 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）"
+    },
+    "planner": {
+      "disable_thinking": true,
+      "_comment_disable_thinking": "Planner 模式是否禁用思考过程（在 system_prompt 中添加 '/no_think'）"
+    },
+    "skills_dir": "./skills",
+    "_comment_skills_dir": "磁盘原生 Skills 目录（SKILL.md），相对于 app 目录，为空则不加载磁盘技能",
+    "use_skill_backend": true,
+    "_comment_use_skill_backend": "是否通过 DatabaseSkillBackend 加载数据库技能（true=DeepAgents Skills 路径，false=传统 Tool 路径）",
+    "sandbox": {
+      "enabled": false,
+      "_comment_enabled": "是否启用沙箱系统（虚拟文件系统 + bash 工具）",
+      "base_dir": "./data/sandbox",
+      "_comment_base_dir": "沙箱根目录，相对于 app 目录",
+      "allow_bash": false,
+      "_comment_allow_bash": "是否允许 Agent 执行 bash 命令（启用后 Agent 可运行 Python 脚本等）"
+    },
+    "execution": {
+      "type": "langgraph",
+      "_comment_type": "任务执行器类型: 'langgraph' (推荐) 或 'legacy' (原有实现)",
+      "use_workflow": true,
+      "_comment_use_workflow": "是否使用新的工作流执行器（真正的并行执行、智能DAG调度）",
+      "parallel_tools": {
+        "enabled": true,
+        "_comment_enabled": "是否启用并行工具执行（LangGraph ToolNode 自动并行）"
+      },
+      "parallel_tasks": {
+        "max_concurrency": 5,
+        "_comment_max_concurrency": "工作流模式下最大并行任务数"
+      },
+      "timeout": {
+        "task_timeout": 300,
+        "_comment_task_timeout": "单个任务超时时间（秒）"
+      },
+      "retry": {
+        "enabled": true,
+        "max_attempts": 3,
+        "_comment_max_attempts": "最大重试次数"
+      },
+      "delegation": {
+        "enabled": false,
+        "_comment_enabled": "是否为所有 agent 注入 delegate_agent 工具（L4 agent 间委派）。true 时 agent 可在 ReAct 循环中委派子任务给另一 agent",
+        "max_depth": 2,
+        "_comment_max_depth": "委派嵌套深度上限（防 A→B→C 无限递归），默认 2"
+      },
+      "crash_resume": {
+        "persist_intermediate": false,
+        "_comment_persist_intermediate": "是否每轮把 collected_results 持久化到 DispatchRecord.result（crash-resume 基础）。默认关避免每轮 DB 写开销；开启后进程崩溃 DB 留有部分结果"
+      },
+      "upstream_result_tool": {
+        "enabled": false,
+        "_comment_enabled": "是否为所有 agent 注入 get_upstream_result 工具（W1 解 dep 文本截断）。true 时下游 agent 可经工具无损获取上游完整结果，不依赖 prompt 截断"
+      },
+      "trigger_leader_election": {
+        "enabled": false,
+        "_comment_enabled": "是否启用 DB 租约 leader 选举（W4 动态 failover）。多副本 HA 时 webhook/file_watch 仅 leader 副本执行；primary 下线自动切换。单副本无需启用",
+        "ttl_seconds": 30,
+        "_comment_ttl_seconds": "租约 TTL（秒），heartbeat 间隔应 < TTL"
+      },
+      "remote_a2a": {
+        "enabled": false,
+        "_comment_enabled": "是否启用远程 A2A agent 适配（预留，实验性）。true 时按 endpoints 把指定 agent 路由到远程 A2A 服务",
+        "endpoints": {},
+        "_comment_endpoints": "agent_name → A2A 服务基址，如 {\"research_agent\": \"http://a2a-host:9999\"}。命中的 task.agent 走 RemoteA2AAdapter，其余仍走本地 LangGraph"
+      }
+    }
+  },
+  "workflow": {
+    "default_task_timeout": 10,
+    "_comment_default_task_timeout": "工作流任务默认超时时间（秒）"
+  },
+  "logging": {
+    "console": {
+      "level": "DEBUG",
+      "enabled": true,
+      "format": "%(asctime)s | %(name)-30s | %(levelname)-8s | %(message)s",
+      "date_format": "%H:%M:%S"
+    },
+    "file": {
+      "level": "DEBUG",
+      "enabled": true,
+      "filename": "agent_execution.log",
+      "max_bytes": 10485760,
+      "backup_count": 5,
+      "format": "%(asctime)s | %(name)-40s | %(levelname)-8s | %(message)s",
+      "date_format": "%Y-%m-%d %H:%M:%S"
+    },
+    "namespaces": {
+      "agent": {
+        "level": "DEBUG",
+        "enabled": true
+      },
+      "graph": {
+        "level": "DEBUG",
+        "enabled": true
+      },
+      "infrastructure": {
+        "level": "DEBUG",
+        "enabled": true
+      },
+      "utils": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "工具类日志"
+      },
+      "tools": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "工具调用日志"
+      },
+      "api": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "API 层日志"
+      },
+      "database": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "数据库日志"
+      },
+      "core": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "核心模块日志"
+      },
+      "domain": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "领域模块日志"
+      },
+      "shared": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "共享模块日志"
+      },
+      "services": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "服务层日志"
+      },
+      "subagents": {
+        "level": "DEBUG",
+        "enabled": true,
+        "_comment": "子代理日志"
+      },
+      "skills": {
+        "level": "INFO",
+        "enabled": true,
+        "_comment": "技能模块日志"
+      }
+    },
+    "performance": {
+      "enabled": true,
+      "log_tool_calls": true,
+      "log_llm_calls": true,
+      "log_tool_io_details": true,
+      "log_llm_io_details": true,
+      "log_agent_creation": true,
+      "log_json_output": true
+    }
+  },
+  "context": {
+    "max_history": 50,
+    "_comment_max_history": "最大历史消息数量（超过时截断）",
+    "compression_enabled": true,
+    "_comment_compression_enabled": "是否启用上下文压缩",
+    "recent_window_size": 10,
+    "_comment_recent_window_size": "压缩时保留的最近消息窗口大小",
+    "compression_threshold": 0.8,
+    "_comment_compression_threshold": "压缩阈值，上下文使用率超过此值时触发压缩",
+    "edit_keep": 3,
+    "_comment_edit_keep": "保留的最近工具结果数量"
+  },
+  "memory": {
+    "enabled": false,
+    "_comment_enabled": "是否启用记忆系统（三级记忆：瞬时/短期/长期）",
+    "immediate_size": 100,
+    "_comment_immediate_size": "瞬时记忆容量（LRU 缓存大小）",
+    "short_term_size": 1000,
+    "_comment_short_term_size": "短期记忆容量",
+    "short_term_ttl_hours": 24,
+    "_comment_short_term_ttl_hours": "短期记忆 TTL（小时）",
+    "long_term_size": 10000,
+    "auto_store_conversation": true,
+    "_comment_auto_store_conversation": "是否自动存储对话记忆（不依赖压缩触发）",
+    "extract_key_info": true,
+    "_comment_extract_key_info": "是否自动提取关键信息到长期记忆",
+    "min_content_length": 10,
+    "_comment_min_content_length": "最小存储内容长度（字符）",
+    "conflict_resolution": {
+      "enabled": true,
+      "similarity_threshold": 0.6,
+      "max_candidates": 5,
+      "_comment": "写入 long_term 前做 LLM 冲突检测；仅命中相似候选才调 LLM；LLM 不可用降级 ADD"
+    },
+    "recency_weight": 0.15,
+    "_comment_recency_weight": "recall 排序 recency 权重(0-1)：0=纯相关性，1=纯时间衰减",
+    "consolidation": {
+      "enabled": false,
+      "cron": "0 5 * * *",
+      "similarity_threshold": 0.85,
+      "max_pairs_per_user": 10,
+      "_comment": "每日 05:00 按 user 维度合并高相似长期记忆（embedding 相似度≥阈值）；破坏性，默认关闭"
+    }
+  },
+  "embedding": {
+    "provider": "openai",
+    "model": "text-embedding-v3",
+    "api_key": "sk-a559d654e4fd46199e8c2d00200ed697",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1"
+  },
+  "compression": {
+    "enabled": true,
+    "_comment_enabled": "是否启用高级压缩（ACON 框架）",
+    "provider": "acon",
+    "_comment_provider": "压缩提供者: 'acon' (Microsoft ACON 框架) 或 'simple' (简单截断)",
+    "trigger_tokens": 40000,
+    "_comment_trigger_tokens": "触发压缩的 token 阈值",
+    "target_tokens": 20000,
+    "_comment_target_tokens": "压缩目标 token 数",
+    "keep_recent_turns": 3,
+    "_comment_keep_recent_turns": "保留最近 N 轮对话",
+    "keep_tool_results": 2,
+    "_comment_keep_tool_results": "保留最近 N 个工具结果"
+  },
+  "isolation": {
+    "level": "none",
+    "_comment_level": "子代理上下文隔离级别: 'none' (无隔离), 'minimal' (最小隔离), 'standard' (标准隔离), 'strict' (严格隔离)",
+    "inherit_system_prompt": true,
+    "_comment_inherit_system_prompt": "是否继承父代理的系统提示词",
+    "inherit_tools": true,
+    "_comment_inherit_tools": "是否继承父代理的工具列表",
+    "inherit_recent_messages": 2,
+    "_comment_inherit_recent_messages": "继承的最近消息数量",
+    "isolate_tool_results": true,
+    "_comment_isolate_tool_results": "是否隔离工具调用结果",
+    "max_inherited_tokens": 10000,
+    "_comment_max_inherited_tokens": "最大继承 token 数"
+  },
+  "stream": {
+    "content_chunk_size": 32,
+    "heartbeat_interval_seconds": 15
+  },
+  "events": {
+    "queue_max_size": 1000
+  },
+  "auth": {
+    "provider": "invres",
+    "_comment_provider": "认证 Provider: invres(默认,base64解码不验签)/standalone(JWT签名验证+签发+刷新)/apikey(API Key查表)/全限定类名(自定义Provider)",
+    "system_name": "invres",
+    "_comment_system_name": "传递给 PermissionManager 选择 payload 解析器",
+
+    "jwt_secret": "change-me-in-production",
+    "jwt_algorithm": "HS256",
+    "enable_permission_check": false,
+    "_comment_enable_permission_check": "是否开启权限校验。true: 使用现有权限解析逻辑（支持自定义解析器）；false: 使用标准JWT解析，roles强制返回[\"admin\"]",
+    "default_token": "",
+    "_comment_default_token": "当前端请求没有token时，API调用使用默认token（后门，生产禁用；启动期会被 auth_safety 校验拦截，除非 allow_no_auth_in_production=true）",
+    "allow_no_auth_in_production": false,
+    "_comment_allow_no_auth_in_production": "显式允许生产关闭鉴权/使用 default_token（仅开发/测试应设 true；false 时 enable_permission_check=false 或 default_token 非空将拒绝启动）",
+
+    "refresh": {
+      "enabled": false,
+      "_comment_enabled": "启用后台 Token 定期刷新（仅 standalone provider 支持）",
+      "refresh_before_expiry_seconds": 3600,
+      "_comment_refresh_before_expiry_seconds": "在 token 过期前多少秒触发刷新",
+      "check_interval_seconds": 300,
+      "_comment_check_interval_seconds": "后台检查间隔（秒）"
+    },
+
+    "providers": {
+      "standalone": {
+        "token_expiry_days": 7,
+        "_comment_token_expiry_days": "standalone provider 默认 token 有效天数"
+      },
+      "apikey": {
+        "keys": {}
+      },
+      "oauth2": {
+        "introspection_url": "",
+        "_comment_introspection_url": "OAuth2 token introspection 端点地址",
+        "client_id": "",
+        "client_secret": ""
+      }
+    }
+  },
+  "knowledge": {
+    "api_base_url": "http://localhost:8001",
+    "_comment_api_base_url": "结构化知识库查询 API 基础地址",
+    "api_headers": {},
+    "_comment_api_headers": "API 请求头，可选"
+  },
+  "mineru": {
+    "base_url": "https://mineru.net",
+    "_comment_base_url": "MinerU API 服务地址，可改为自建或测试环境地址",
+    "api_key": "${MINERU_API_KEY:}",
+    "_comment_api_key": "MinerU API 密钥，优先从环境变量 MINERU_API_KEY 读取",
+    "timeout": 600,
+    "_comment_timeout": "API 请求超时时间（秒）",
+    "poll_interval": 5,
+    "_comment_poll_interval": "解析状态轮询间隔（秒）"
+  },
+  "apollo": {
+    "local_test_mode": true,
+    "_comment_local_test_mode": "本地测试设为true，生产设为false",
+    "app_id": "smart-agent-llm-admin",
+    "cluster": "default",
+    "meta_server_address": "http://生产Apollo地址:18081",
+    "_comment_meta_server_address": "生产替换真实地址",
+    "local_config_path": "config/application.properties",
+    "_comment_local_config_path": "本地配置文件路径（相对app目录，生产环境可留空）",
+    "namespaces": [
+      "invres.pub"
+    ],
+    "cache_file_dir_path": "./apollo_cache",
+    "encrypt_key": "863c50b1abc6470bbbea19e7593fc0b1",
+    "_comment_encrypt_key": "Jasypt 加密密钥，用于解密 Apollo 配置中 ENC(...) 包裹的密码。留空则不进行解密"
+  },
+  "storage": {
+    "provider": "minio",
+    "_comment_provider": "文件下载存储提供者: minio/local/http。默认 minio，并兼容旧版 storage.endpoint 等配置",
+    "temp_dir": "./temp/downloads",
+    "endpoint": "172.25.42.232:9000",
+    "access_key": "admin",
+    "secret_key": "password",
+    "secure": false,
+    "region": "us-east-1",
+    "default_bucket": "invres-smart-agent",
+    "_comment_legacy_minio": "以上 endpoint/access_key/secret_key/secure/region/default_bucket 为旧版 MinIO 配置，仍然兼容",
+    "minio": {
+      "endpoint": "${MINIO_ENDPOINT:172.25.42.232:9000}",
+      "access_key": "${MINIO_ACCESS_KEY:admin}",
+      "secret_key": "${MINIO_SECRET_KEY:password}",
+      "secure": false,
+      "region": "us-east-1",
+      "default_bucket": "invres-smart-agent"
+    },
+    "local": {
+      "base_dir": "${FILE_STORAGE_BASE_DIR:/data/files}",
+      "copy_to_temp": true,
+      "_comment": "provider=local 时使用。file_path 作为 base_dir 下的相对路径，禁止绝对路径和路径穿越"
+    },
+    "http": {
+      "base_url": "${FILE_STORAGE_BASE_URL:}",
+      "upload_url": "${FILE_STORAGE_UPLOAD_URL:}",
+      "headers": {},
+      "timeout": 60,
+      "allowed_hosts": [],
+      "_comment": "provider=http 时使用。base_url 用于 POST JSON Body {filePath, bucketName} 下载文件；upload_url 用于 POST multipart/form-data 上传文件（留空则使用 base_url）"
+    }
+  },
+  "smart_writing": {
+    "material": {
+      "enabled": true,
+      "_comment_enabled": "素材接口开关：true=调用真实接口，false=使用模拟数据",
+      "base_url": "http://localhost:8080",
+      "_comment_base_url": "素材接口基础地址，联调时配置真实地址",
+      "indicator_path": "/smart-agent-llm-admin/api/smart-agent-llm-admin/template/material/indicatorData",
+      "_comment_indicator_path": "指标数据接口路径",
+      "chart_path": "/smart-agent-llm-admin/api/smart-agent-llm-admin/template/material/chartData",
+      "_comment_chart_path": "图表数据接口路径",
+      "timeout": 30,
+      "_comment_timeout": "请求超时时间（秒）",
+      "max_concurrent_requests": 5,
+      "_comment_max_concurrent_requests": "素材接口最大并发数量，避免第三方平台限流（建议5-10）"
+    },
+    "max_parallel_assistboxes": 5,
+    "_comment_max_parallel_assistboxes": "最大并行助写框数量",
+    "assistbox_timeout": 120,
+    "_comment_assistbox_timeout": "助写框执行超时时间（秒）",
+    "max_retry_attempts": 3,
+    "_comment_max_retry_attempts": "最大重试次数"
+  }
+}

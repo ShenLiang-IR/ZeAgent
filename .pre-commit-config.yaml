@@ -1,0 +1,45 @@
+# Pre-commit hooks：提交前自动跑代码质量检查
+# 安装：pip install pre-commit && pre-commit install
+# 手动跑：pre-commit run --all-files
+# 文档：https://pre-commit.com
+
+repos:
+  # ─── ruff：lint + format（替代 flake8 + black + isort） ───
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.0
+    hooks:
+      - id: ruff
+        # 配置在 pyproject.toml [tool.ruff]
+        args: [--fix, --exit-non-zero-on-fix]
+      - id: ruff-format
+
+  # ─── 基础检查（行尾空格 / 大文件 / 调试语句） ───
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: [--maxkb=500]
+      - id: check-merge-conflict
+      - id: debug-leave-asserts  # 检测 assert 语句（生产代码不应有）
+        exclude: ^test/
+      - id: no-commit-to-branch
+        # 保护 main 分支不直接 push（强制 PR）
+        args: [--branch, main]
+
+  # ─── mypy：渐进式类型检查（不阻塞，仅告警） ───
+  # 第一期 strict=false，仅检测明显错误
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+        # 配置在 pyproject.toml [tool.mypy]
+        # 第一期不阻塞提交（--ignore-missing-stubs）
+        args: [--ignore-missing-imports, --no-error-summary]
+        # 排除测试 + 子模块
+        exclude: ^(test/|frontend/|skills/|bge-small-zh-v1___5/)
+        # 跳过 RAG optional 依赖的类型
+        additional_dependencies: []
