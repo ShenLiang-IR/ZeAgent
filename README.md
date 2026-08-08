@@ -309,3 +309,7 @@ docker compose -f docker/docker-compose.langfuse.yml up -d
 ## 系统截图
 <img width="1926" height="864" alt="82" src="https://github.com/user-attachments/assets/4109a844-cac8-4ab7-81eb-20cbd0e5eeb1" />
 
+<img width="1914" height="798" alt="image" src="https://github.com/user-attachments/assets/b8b5adcf-cf4a-449e-83ab-dc6c7db2b961" />
+
+<img width="1905" height="909" alt="image" src="https://github.com/user-attachments/assets/5d1443e8-a6da-49b8-93f2-bf6c657049bc" />
+
