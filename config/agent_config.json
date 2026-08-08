@@ -392,25 +392,6 @@
         "poll_interval": 5,
         "_comment_poll_interval": "解析状态轮询间隔（秒）"
     },
-    "internal_parse": {
-        "_comment": "内网异步文件解析服务配置",
-        "api_key": "${INTERNAL_PARSE_API_KEY:}",
-        "base_url": "http://20.200.175.85:32023",
-        "expire_seconds": 1800,
-        "timeout": 1500,
-        "poll_interval": 5,
-        "global_busi_track_no": "TRACK20240001",
-        "send_sys_or_cmpt_no": "99714490000",
-        "start_sys_or_cmpt_no": "99714490000",
-        "busi_send_inst_no": "INST001",
-        "scene_id": "0060",
-        "parse_service": "GDPS",
-        "parse_type": "MARKDOWN_FORMAT",
-        "enable_process_table_metadata": "True",
-        "enable_process_header_metadata": "True",
-        "enable_seg_chunk": "True",
-        "enable_title_correction": "True"
-    },
     "storage": {
         "provider": "minio",
         "endpoint": "127.0.0.1:9000",
