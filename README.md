@@ -1,4 +1,4 @@
-# install_deb_refactor（Agent API Server）
+# ZeAgent（Agent API Server）
 
 基于 LangChain 1.x / LangGraph 1.x 的企业级多智能体（Multi-Agent）服务平台：**FastAPI 后端 + Vue 3 管理后台**。支持多租户工作空间、Agent 配置/审批/版本发布、多执行器调度（ReAct / DeepAgent / LLM 自主规划 / 远程 A2A）、工具体系（内置工具 / Skill / MCP / 外部 HTTP 工具）、三层记忆、RAG 知识库、触发器编排、全链路监控与审计。
 
@@ -60,8 +60,6 @@ install_deb_refactor/
 ├── test/                      # pytest 后端测试（168 个测试文件、1000+ 用例；pytest.ini 位于本目录）
 ├── frontend/                  # Vue 3 管理后台（src/{views,components,api,layouts,router}）
 ├── docker/                    # Dockerfile.backend / Dockerfile.frontend + docker-compose 编排
-├── prometheus/                # Prometheus 配置（prometheus.yml + alerts.yml）
-├── grafana/                   # Grafana provisioning（数据源自动配置）
 ├── alembic/ + alembic.ini     # Alembic 数据库迁移
 ├── docs/                      # 设计文档与规格说明（docs/specs/ 为各专题设计稿）
 ├── data/ · logs/              # 运行数据与日志（gitignore）
@@ -308,3 +306,10 @@ docker compose -f docker/docker-compose.langfuse.yml up -d
 - 设计文档目录：`docs/`（`agent-approval-version-design.md`、`flow.md`、`executoranalyse.md` 等；`docs/specs/` 收录触发器注册、监控、限流、审计、容器化、团队协作、用量统计等专题设计稿）
 - 配置目录说明：`config/README.md`（db_config/http_config/subagents/外部工具配置）
 - API 文档：http://localhost:8072/docs
+## 系统截图
+<img width="1926" height="864" alt="82" src="https://github.com/user-attachments/assets/4109a844-cac8-4ab7-81eb-20cbd0e5eeb1" />
+<br>
+<img width="1914" height="798" alt="image" src="https://github.com/user-attachments/assets/b8b5adcf-cf4a-449e-83ab-dc6c7db2b961" />
+<br>
+<img width="1905" height="909" alt="image" src="https://github.com/user-attachments/assets/5d1443e8-a6da-49b8-93f2-bf6c657049bc" />
+
