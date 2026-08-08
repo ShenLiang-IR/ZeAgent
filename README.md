@@ -12,8 +12,8 @@
 |---|---|
 | 后端 | Python 3.13 · FastAPI 0.139 · SQLAlchemy 2.x · Pydantic v2 · LangChain 1.x / LangGraph 1.x · deepagents · APScheduler · loguru |
 | 前端 | Vue 3 · Element Plus · Vite 5 · Vitest · ECharts · Mermaid · vue-router |
-| 数据存储 | MySQL 8.0（业务主库）· Redis（限流/事件，可选）· ChromaDB（RAG 向量库，可选）· MinIO / 本地文件存储 |
-| 可观测 | prometheus-fastapi-instrumentator（`/metrics`）· Prometheus · Grafana · Langfuse（可选） |
+| 数据存储 | MySQL 8.0（业务主库）·· ChromaDB（RAG 向量库，可选）|
+| 可观测 | prometheus-fastapi-instrumentator（`/metrics`）· Langfuse（可选） |
 | 环境管理 | conda（依赖声明为 pip 格式 `requirements.txt`） |
 
 ## 项目结构
@@ -57,7 +57,6 @@ install_deb_refactor/
 │   ├── migration/             #   历史一次性迁移（trigger schema/tool visibility/plugin resource id...）
 │   └── tools/                 #   MCP 测试服务器、流程图生成等辅助工具
 ├── utils/                     # 工具类（config 加载与热重载 / crypto / llm / RBAC / SSE / observability...）
-├── test/                      # pytest 后端测试（168 个测试文件、1000+ 用例；pytest.ini 位于本目录）
 ├── frontend/                  # Vue 3 管理后台（src/{views,components,api,layouts,router}）
 ├── docker/                    # Dockerfile.backend / Dockerfile.frontend + docker-compose 编排
 ├── alembic/ + alembic.ini     # Alembic 数据库迁移
@@ -65,7 +64,7 @@ install_deb_refactor/
 ├── data/ · logs/              # 运行数据与日志（gitignore）
 ├── bge-small-zh-v1___5/       # 本地中文 embedding 模型目录（大文件，gitignore）
 ├── .github/                   # CI 工作流 + dependabot
-├── start_server.bat / .sh     # 后端启动脚本（自动激活 conda 环境 install_deb_refactor）
+├── start_server.bat / .sh     # 后端启动脚本（自动激活 conda 环境）
 ├── start_vite.bat             # 前端开发服务器启动脚本（Windows）
 └── requirements.txt / requirements.rag.txt   # 核心依赖 / RAG 可选依赖（含 torch CPU，约 5GB）
 ```
