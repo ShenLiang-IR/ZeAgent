@@ -1,5 +1,5 @@
 # ─── build 阶段：装依赖 ───
-FROM python:3.13-slim AS builder
+FROM python:3.14-slim AS builder
 WORKDIR /app
 
 # 系统依赖（pymysql/sqlalchemy 编译需要的）
@@ -18,7 +18,7 @@ RUN if [ "$INSTALL_RAG" = "true" ]; then \
     pip install --no-cache-dir -r requirements.txt
 
 # ─── runtime 阶段：精简镜像 ───
-FROM python:3.13-slim AS runtime
+FROM python:3.14-slim AS runtime
 WORKDIR /app
 
 # 运行时系统依赖（mysqlclient 运行时只需 client 库）+ curl 用于健康检查
