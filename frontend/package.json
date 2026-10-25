@@ -16,7 +16,7 @@
     "@iconify/vue": "^5.0.1",
     "axios": "^1.7.0",
     "echarts": "^6.1.0",
-    "element-plus": "^2.7.0",
+    "element-plus": "^2.14.3",
     "mermaid": "^11.16.0",
     "vue": "^3.4.0",
     "vue-echarts": "^8.0.1",
